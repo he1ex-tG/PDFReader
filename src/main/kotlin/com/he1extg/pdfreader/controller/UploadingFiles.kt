@@ -2,9 +2,6 @@ package com.he1extg.pdfreader.controller
 
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.storage.StorageService
-import com.he1extg.pdfreader.ttsprocessing.PDFReader
-import com.he1extg.pdfreader.ttsprocessing.TTS
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -20,9 +17,6 @@ import java.util.stream.Collectors
 class UploadingFiles(
     val storageService: StorageService
 ) {
-    @Autowired
-    private lateinit var pdfReader: PDFReader
-
     @GetMapping("/")
     fun listUploadedFiles(model: Model): String {
         model.addAttribute(
@@ -50,8 +44,7 @@ class UploadingFiles(
 
     @PostMapping("/")
     fun handleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String {
-        val filePathString = storageService.store(file)
-        pdfReader.sss(filePathString)
+        storageService.store(file)
         redirectAttributes.addFlashAttribute(
             "message",
             "You successfully uploaded ${file.originalFilename}!"

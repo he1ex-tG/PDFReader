@@ -1,18 +1,11 @@
 package com.he1extg.pdfreader.ttsprocessing
 
-import com.itextpdf.text.pdf.PdfReader
-import com.itextpdf.text.pdf.parser.PdfTextExtractor
-import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy
-import org.springframework.stereotype.Service
+import java.io.InputStream
+import java.io.OutputStream
 
-@Service
-class PDFReader {
-    fun sss(fileName: String) {
-        val ss: PdfReader = PdfReader(fileName)
-        for (page in (1..ss.numberOfPages)) {
-            val strategy = SimpleTextExtractionStrategy()
-            val rrr = PdfTextExtractor.getTextFromPage(ss, page, strategy)
-            TTS().speak(rrr)
-        }
-    }
+interface PDFReader {
+    fun pdfToVoice(filePathString: String)
+    fun pdfToVoice(inputFileStream: InputStream)
+    fun pdfToByteStream(filePathString: String): OutputStream
+    fun pdfToByteStream(inputFileStream: InputStream): OutputStream
 }
