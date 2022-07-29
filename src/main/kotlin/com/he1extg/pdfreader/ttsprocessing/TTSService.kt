@@ -2,7 +2,6 @@ package com.he1extg.pdfreader.ttsprocessing
 
 import com.sun.speech.freetts.Voice
 import com.sun.speech.freetts.VoiceManager
-import com.sun.speech.freetts.audio.SingleFileAudioPlayer
 import org.springframework.stereotype.Service
 import java.io.OutputStream
 
@@ -17,16 +16,11 @@ class TTSService : TTS {
         voice.allocate()
     }
 
-    fun speak(text: String) {
-        voice.speak(text)
-        SingleFileAudioPlayer()
+    override fun speak(text: String) {
+        TODO("Searching a good tts")
     }
 
-    override fun speakIt(text: String) {
-        voice.speak(text)
-    }
-
-    override fun toOutputStream(text: String): OutputStream {
-        TODO("Not yet implemented")
+    override fun stream(text: String): OutputStream {
+        TODO("Searching a good tts")
     }
 }

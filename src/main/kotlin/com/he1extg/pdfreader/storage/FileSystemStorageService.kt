@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.FileSystemUtils
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
+import java.io.InputStream
 import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,7 +32,7 @@ class FileSystemStorageService(properties: StorageProperties) : StorageService {
             }
             val filePath = rootLocation.resolve(file.originalFilename)
             Files.copy(file.inputStream, filePath)
-            pdfReader.pdfToVoice(filePath.toString())
+            TODO("Use file here")
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + file.originalFilename, e)
         }

@@ -19,15 +19,24 @@ class PDFReaderService(val tts: TTS) : PDFReader {
         return sb.toString()
     }
 
+    private fun extractText(inputFileStream: InputStream): String {
+        val pr = PdfReader(inputFileStream)
+        val sb = StringBuilder()
+        for (page in (1..pr.numberOfPages)) {
+            sb.append(PdfTextExtractor.getTextFromPage(pr, page, SimpleTextExtractionStrategy()))
+        }
+        return sb.toString()
+    }
+
     override fun pdfToVoice(filePathString: String) =
-        tts.speakIt(extractText(filePathString))
+        tts.speak(extractText(filePathString))
 
     override fun pdfToVoice(inputFileStream: InputStream) =
-        tts.speakIt(inputFileStream.toString())
+        tts.speak(extractText(inputFileStream))
 
     override fun pdfToByteStream(filePathString: String): OutputStream =
-        tts.toOutputStream(extractText(filePathString))
+        tts.stream(extractText(filePathString))
 
     override fun pdfToByteStream(inputFileStream: InputStream): OutputStream =
-        tts.toOutputStream(inputFileStream.toString())
+        tts.stream(extractText(inputFileStream))
 }
