@@ -26,11 +26,11 @@ class UploadingFiles(
                 MvcUriComponentsBuilder.fromMethodName(
                     UploadingFiles::class.java,
                     "serveFile",
-                    it.fileName.toString().also { aa -> println(aa) }
+                    it.fileName.toString()
                 ).build().toUri().toString()
             }.collect(Collectors.toList())
         )
-        return "uploadForm";
+        return "uploadForm"
     }
 
     @GetMapping("/files/{fileName:.+}")

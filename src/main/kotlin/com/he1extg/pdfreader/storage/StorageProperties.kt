@@ -7,5 +7,5 @@ class StorageProperties {
     /**
      * Folder location for storing files
      */
-    var location = "upload-dir"
+    lateinit var uploadDir: String
 }

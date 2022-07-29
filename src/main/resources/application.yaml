@@ -1,7 +1,7 @@
 spring:
   servlet:
     multipart:
-      max-file-size = 128KB
-      max-request-size = 128KB
+      max-file-size: 128KB
+      max-request-size: 128KB
 storage:
-  upload-dir = upload-dir
+  upload-dir: upload_dir_11

@@ -17,7 +17,7 @@ import java.util.stream.Stream
 
 @Service
 class FileSystemStorageService(properties: StorageProperties) : StorageService {
-    private val rootLocation: Path = Paths.get(properties.location)
+    private val rootLocation: Path = Paths.get(properties.uploadDir)
 
     override fun store(file: MultipartFile) {
         try {
