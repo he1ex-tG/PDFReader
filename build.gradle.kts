@@ -22,6 +22,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	implementation("net.sf.sociaal:freetts:1.2.2")
+	implementation("com.itextpdf:itextpdf:5.0.6")
 }
 
 tasks.withType<KotlinCompile> {
