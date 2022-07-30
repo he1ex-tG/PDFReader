@@ -7,6 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import java.util.*
+import javax.speech.Central
+import javax.speech.synthesis.Synthesizer
+import javax.speech.synthesis.SynthesizerModeDesc
 
 
 @SpringBootApplication

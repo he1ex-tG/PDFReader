@@ -2,6 +2,9 @@ package com.he1extg.pdfreader.controller
 
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.storage.StorageService
+import com.he1extg.pdfreader.ttsprocessing.MP3StreamAudioPlayer
+import com.sun.speech.freetts.VoiceManager
+import com.sun.speech.freetts.audio.SingleFileAudioPlayer
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -11,7 +14,11 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.stream.Collectors
+import javax.sound.sampled.AudioFileFormat
 
 @Controller
 class UploadingFiles(
@@ -29,6 +36,23 @@ class UploadingFiles(
                 ).build().toUri().toString()
             }.collect(Collectors.toList())
         )
+
+
+        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory")
+        val voiceManager = VoiceManager.getInstance()
+        val voice = voiceManager.getVoice("kevin16")
+
+        //voice.speak("Hello world!")
+        val aaaa = MP3StreamAudioPlayer()
+        voice.allocate()
+        val def = voice.audioPlayer
+        voice.audioPlayer = aaaa
+        voice.speak("aaaaaaaaaaaaaaaa!")
+        val sss = aaaa.outputStream
+        voice.audioPlayer = def
+        voice.speak()
+        //aaaa.close()
+
         return "uploadForm"
     }
 
