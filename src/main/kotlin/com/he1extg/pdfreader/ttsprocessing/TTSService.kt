@@ -10,6 +10,9 @@ import com.sun.speech.freetts.audio.NullAudioPlayer
 import com.sun.speech.freetts.audio.RawFileAudioPlayer
 import com.sun.speech.freetts.audio.SingleFileAudioPlayer
 import org.springframework.stereotype.Service
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 import javax.sound.sampled.AudioFormat
@@ -23,21 +26,28 @@ import javax.speech.synthesis.SynthesizerModeDesc
 class TTSService : TTS {
     private lateinit var voice: Voice
 
+    private val mp3StreamWrapper = MP3StreamWrapper()
+    private val inputStream: InputStream
+        get() = mp3StreamWrapper.inputStream
+
+    private val javaStreamAudioPlayer = JavaStreamingAudioPlayer()
+    private val mp3StreamAudioPlayer = MP3StreamAudioPlayer(mp3StreamWrapper)
+
     init {
         System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory")
         val voiceManager = VoiceManager.getInstance()
-        val voice = voiceManager.getVoice("kevin16")
-        voice.speak("Hello world!")
-        voice.audioPlayer = NullAudioPlayer()
-        voice.speak("aaaaaaaaaaaaaaaa!")
+        voice = voiceManager.getVoice("kevin16")
         voice.allocate()
     }
 
     override fun speak(text: String) {
-        TODO("Searching a good tts")
+        voice.audioPlayer = javaStreamAudioPlayer
+        voice.speak(text)
     }
 
-    override fun stream(text: String): OutputStream {
-        TODO("Searching a good tts")
+    override fun stream(text: String): InputStream {
+        voice.audioPlayer = mp3StreamAudioPlayer
+        voice.speak(text)
+        return inputStream
     }
 }

@@ -34,9 +34,9 @@ class PDFReaderService(val tts: TTS) : PDFReader {
     override fun pdfToVoice(inputFileStream: InputStream) =
         tts.speak(extractText(inputFileStream))
 
-    override fun pdfToByteStream(filePathString: String): OutputStream =
+    override fun pdfToByteStream(filePathString: String): InputStream =
         tts.stream(extractText(filePathString))
 
-    override fun pdfToByteStream(inputFileStream: InputStream): OutputStream =
+    override fun pdfToByteStream(inputFileStream: InputStream): InputStream =
         tts.stream(extractText(inputFileStream))
 }

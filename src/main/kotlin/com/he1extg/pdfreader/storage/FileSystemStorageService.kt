@@ -30,9 +30,11 @@ class FileSystemStorageService(properties: StorageProperties) : StorageService {
             if (file.isEmpty) {
                 throw StorageException("Failed to store empty file " + file.originalFilename)
             }
-            val filePath = rootLocation.resolve(file.originalFilename)
-            Files.copy(file.inputStream, filePath)
-            TODO("Use file here")
+            //val filePath = rootLocation.resolve(file.originalFilename)
+            val filePath = rootLocation.resolve("asd.wav")
+            //Files.copy(file.inputStream, filePath)
+            Files.copy(pdfReader.pdfToByteStream(file.inputStream), filePath)
+            //pdfReader.pdfToVoice(file.inputStream)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + file.originalFilename, e)
         }

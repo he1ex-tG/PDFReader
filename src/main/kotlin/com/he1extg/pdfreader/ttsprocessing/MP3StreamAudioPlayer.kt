@@ -1,7 +1,6 @@
 package com.he1extg.pdfreader.ttsprocessing
 
 import com.sun.speech.freetts.audio.AudioPlayer
-import com.sun.speech.freetts.util.Utilities
 import java.io.*
 import java.util.*
 import javax.sound.sampled.AudioFileFormat
@@ -9,17 +8,15 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 
-class MP3StreamAudioPlayer : AudioPlayer {
-    private var currentFormat: AudioFormat? = null
-    private val baseName: String = ""
+class MP3StreamAudioPlayer(
+    private val mp3StreamWrapper: MP3StreamWrapper
+) : AudioPlayer {
+    private var currentFormat: AudioFormat = AudioFormat(8000.0F, 16, 1, true, true)
     private var outputData: ByteArray = byteArrayOf()
     private var curIndex = 0
     private var totBytes = 0
     private val outputType: AudioFileFormat.Type = AudioFileFormat.Type.WAVE
     private val outputList: Vector<InputStream> = Vector<InputStream>()
-
-    var outputStream: ByteArrayOutputStream = ByteArrayOutputStream()
-        private set
 
     @Synchronized
     override fun setAudioFormat(format: AudioFormat) {
@@ -27,7 +24,7 @@ class MP3StreamAudioPlayer : AudioPlayer {
     }
 
     override fun getAudioFormat(): AudioFormat {
-        return currentFormat!!
+        return currentFormat
     }
 
     override fun pause() {}
@@ -47,20 +44,7 @@ class MP3StreamAudioPlayer : AudioPlayer {
     override fun startFirstSampleTimer() {}
 
     @Synchronized
-    override fun close() {
-        try {
-            val file = File(baseName)
-            val iS: InputStream = SequenceInputStream(outputList.elements())
-            val ais = AudioInputStream(iS, currentFormat, (totBytes / currentFormat!!.frameSize).toLong())
-            println("Wrote synthesized speech to " + baseName)
-            //AudioSystem.write(ais, outputType, file)
-            AudioSystem.write(ais, outputType, outputStream)
-        } catch (var4: IOException) {
-            System.err.println("Can't write audio to " + baseName)
-        } catch (var5: IllegalArgumentException) {
-            System.err.println("Can't write audio type " + outputType)
-        }
-    }
+    override fun close() {}
 
     override fun getVolume(): Float {
         return 1.0f
@@ -80,6 +64,11 @@ class MP3StreamAudioPlayer : AudioPlayer {
     }
 
     override fun drain(): Boolean {
+        val iS: InputStream = SequenceInputStream(outputList.elements())
+        val inputAStream = AudioInputStream(iS, currentFormat, (totBytes / currentFormat.frameSize).toLong())
+        val bos = ByteArrayOutputStream()
+        AudioSystem.write(inputAStream, outputType, bos)
+        mp3StreamWrapper.inputStream = ByteArrayInputStream(bos.toByteArray())
         return true
     }
 
@@ -102,7 +91,11 @@ class MP3StreamAudioPlayer : AudioPlayer {
         return true
     }
 
-    override fun toString(): String = outputStream.toString()
+    override fun toString(): String = ""
 
     override fun showMetrics() {}
+}
+
+class MP3StreamWrapper {
+    var inputStream: ByteArrayInputStream = ByteArrayInputStream(byteArrayOf())
 }
