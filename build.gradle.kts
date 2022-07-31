@@ -25,7 +25,7 @@ dependencies {
 
 	implementation("net.sf.sociaal:freetts:1.2.2")
 	implementation("com.itextpdf:itextpdf:5.0.6")
-	implementation("com.google.cloud:google-cloud-texttospeech:2.4.0")
+	implementation("com.sipgate:mp3-wav:1.0.4")
 }
 
 tasks.withType<KotlinCompile> {

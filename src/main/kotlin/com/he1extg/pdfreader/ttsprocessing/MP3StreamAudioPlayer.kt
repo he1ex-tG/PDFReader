@@ -1,5 +1,6 @@
 package com.he1extg.pdfreader.ttsprocessing
 
+import com.sipgate.mp3wav.Converter
 import com.sun.speech.freetts.audio.AudioPlayer
 import java.io.*
 import java.util.*
@@ -7,6 +8,7 @@ import javax.sound.sampled.AudioFileFormat
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
+
 
 class MP3StreamAudioPlayer(
     private val mp3StreamWrapper: MP3StreamWrapper
@@ -17,6 +19,11 @@ class MP3StreamAudioPlayer(
     private var totBytes = 0
     private val outputType: AudioFileFormat.Type = AudioFileFormat.Type.WAVE
     private val outputList: Vector<InputStream> = Vector<InputStream>()
+
+    private fun inMemoryConvertToMP3(inputStream: ByteArray): ByteArray {
+        val c = Converter(ByteArrayInputStream(inputStream))
+        return c.toByteArray()
+    }
 
     @Synchronized
     override fun setAudioFormat(format: AudioFormat) {
@@ -68,7 +75,7 @@ class MP3StreamAudioPlayer(
         val inputAStream = AudioInputStream(iS, currentFormat, (totBytes / currentFormat.frameSize).toLong())
         val bos = ByteArrayOutputStream()
         AudioSystem.write(inputAStream, outputType, bos)
-        mp3StreamWrapper.inputStream = ByteArrayInputStream(bos.toByteArray())
+        mp3StreamWrapper.inputStream = ByteArrayInputStream(inMemoryConvertToMP3(bos.toByteArray()))
         return true
     }
 
