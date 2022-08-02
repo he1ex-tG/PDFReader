@@ -13,7 +13,7 @@ import javax.sound.sampled.AudioSystem
 class MP3StreamAudioPlayer(
     private val mp3StreamWrapper: MP3StreamWrapper
 ) : AudioPlayer {
-    private var currentFormat: AudioFormat = AudioFormat(8000.0F, 16, 1, true, true)
+    private var currentFormat: AudioFormat = AudioFormat(44100F, 8, 1, true, false)
     private var outputData: ByteArray = byteArrayOf()
     private var curIndex = 0
     private var totBytes = 0

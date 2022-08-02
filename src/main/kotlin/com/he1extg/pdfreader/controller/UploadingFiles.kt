@@ -32,7 +32,8 @@ class UploadingFiles(
                 ).build().toUri().toString()
             }.collect(Collectors.toList())
         )
-        return "uploadForm"
+        //return "uploadForm"
+        return "index"
     }
 
     @GetMapping("/files/{fileName:.+}")
@@ -47,11 +48,13 @@ class UploadingFiles(
 
     @PostMapping("/")
     fun handleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String {
-        storageService.store(file)
-        redirectAttributes.addFlashAttribute(
-            "message",
-            "You successfully uploaded ${file.originalFilename}!"
-        )
+        if (!file.isEmpty) {
+            storageService.store(file)
+            redirectAttributes.addFlashAttribute(
+                "message",
+                "You successfully uploaded ${file.originalFilename}!"
+            )
+        }
         return "redirect:/"
     }
 
