@@ -6,6 +6,9 @@ import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
+import javazoom.jl.decoder.Bitstream
+import javazoom.jl.decoder.Header
+import javazoom.jl.player.Player
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -13,14 +16,13 @@ import org.springframework.stereotype.Service
 import org.springframework.util.FileSystemUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
+import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.stream.Stream
-import javax.sound.sampled.AudioSystem
 
 
 @Service
@@ -37,7 +39,8 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
             if (filePDF.isEmpty) {
                 throw StorageException("Failed to store empty file " + filePDF.originalFilename)
             }
-            val filePath = rootLocation.resolve(filePDF.originalFilename!!.split(".").first() + ".mp3")
+            val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
+            val filePath = rootLocation.resolve(fileNameToStore)
             val pdfText = pdfReader.extractText(filePDF.inputStream)
             val mp3InputStream = tts.stream(pdfText)
             Files.copy(mp3InputStream, filePath)
@@ -91,19 +94,11 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
             throw StorageFileNotFoundException("Could not read file: $fileName", e)
         }
 
-    /*override fun loadAsAudioFile(fileName: String): InputStream {
-        return try {
-            val file: Path = load(fileName)
-            val resource: Resource = UrlResource(file.toUri())
-            if (resource.exists() || resource.isReadable) {
-                resource
-            } else {
-                throw StorageFileNotFoundException("Could not read file: $fileName")
-            }
-        } catch (e: MalformedURLException) {
-            throw StorageFileNotFoundException("Could not read file: $fileName", e)
-        }
-    }*/
+    override fun playAudioFile(fileName: String) {
+        val inputStream = loadAsResource(fileName).file.inputStream()
+        val mediaPlayer = Player(inputStream)
+        mediaPlayer.play()
+    }
 
     override fun deleteAll(): Boolean =
         FileSystemUtils.deleteRecursively(rootLocation.toFile())

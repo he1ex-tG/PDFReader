@@ -13,6 +13,6 @@ interface FileHandler {
     fun loadAllAsModelInfo(): Stream<HTTPModelFileInfo>
     fun load(fileName: String): Path
     fun loadAsResource(fileName: String): Resource
-    //fun loadAsAudioFile(fileName: String): InputStream
+    fun playAudioFile(fileName: String)
     fun deleteAll(): Boolean
 }

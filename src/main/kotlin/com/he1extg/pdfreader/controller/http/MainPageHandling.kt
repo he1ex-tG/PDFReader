@@ -23,11 +23,8 @@ class MainPageHandling(
 
     @GetMapping("/play/{fileName:.+}")
     fun playFile(@PathVariable fileName: String): String {
-        /*val file: Resource = fileHandler.loadAsResource(fileName)
-        val audioInputStream = AudioSystem.getAudioInputStream(file.file)
-        tts.speak(audioInputStream)*/
-        TODO("Resolve this issue")
-        return "index"
+        fileHandler.playAudioFile(fileName)
+        return "redirect:/"
     }
 
     @PostMapping("/")

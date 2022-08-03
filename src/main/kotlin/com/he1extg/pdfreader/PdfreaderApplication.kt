@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Bean
 class PdfreaderApplication {
 	@Bean
 	fun init(fileHandler: FileHandler): CommandLineRunner = CommandLineRunner {
-		fileHandler.deleteAll()
-		fileHandler.init()
+		//fileHandler.deleteAll()
+		//fileHandler.init()
 	}
 }
 
