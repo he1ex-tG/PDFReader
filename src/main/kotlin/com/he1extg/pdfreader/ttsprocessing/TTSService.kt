@@ -45,6 +45,11 @@ class TTSService : TTS {
         voice.speak(text)
     }
 
+    override fun speak(inputStream: InputStream) {
+        voice.audioPlayer = javaStreamAudioPlayer
+        voice.speak(inputStream)
+    }
+
     override fun stream(text: String): InputStream {
         voice.audioPlayer = mp3StreamAudioPlayer
         voice.speak(text)
