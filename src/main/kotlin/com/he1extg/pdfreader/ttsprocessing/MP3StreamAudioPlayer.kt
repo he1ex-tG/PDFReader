@@ -1,7 +1,9 @@
 package com.he1extg.pdfreader.ttsprocessing
 
-import com.sipgate.mp3wav.Converter
 import com.sun.speech.freetts.audio.AudioPlayer
+import net.sourceforge.lame.lowlevel.LameEncoder
+import net.sourceforge.lame.mp3.Lame
+import net.sourceforge.lame.mp3.MPEGMode
 import java.io.*
 import java.util.*
 import javax.sound.sampled.AudioFileFormat
@@ -9,20 +11,44 @@ import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 
-
 class MP3StreamAudioPlayer(
     private val mp3StreamWrapper: MP3StreamWrapper
 ) : AudioPlayer {
-    private var currentFormat: AudioFormat = AudioFormat(44100F, 8, 1, true, false)
+    private val defaultFormat: AudioFormat = AudioFormat(
+        AudioFormat.Encoding.PCM_SIGNED,
+        16000.0F,
+        16,
+        1,
+        2,
+        16000.0F,
+        true
+    )
+    private var currentFormat: AudioFormat = defaultFormat
     private var outputData: ByteArray = byteArrayOf()
     private var curIndex = 0
     private var totBytes = 0
     private val outputType: AudioFileFormat.Type = AudioFileFormat.Type.WAVE
     private val outputList: Vector<InputStream> = Vector<InputStream>()
 
-    private fun inMemoryConvertToMP3(inputStream: ByteArray): ByteArray {
-        val c = Converter(ByteArrayInputStream(inputStream))
-        return c.toByteArray()
+    private fun encodeToMp3(audioInputStream: AudioInputStream): ByteArray {
+        val encoder = LameEncoder(
+            audioInputStream.format,
+            256,
+            MPEGMode.STEREO,
+            Lame.QUALITY_HIGHEST,
+            false
+        )
+        val mp3 = ByteArrayOutputStream()
+        val inputBuffer = ByteArray(encoder.pcmBufferSize)
+        val outputBuffer = ByteArray(encoder.pcmBufferSize)
+        var bytesRead: Int
+        var bytesWritten: Int
+        while (0 < audioInputStream.read(inputBuffer).also { bytesRead = it }) {
+            bytesWritten = encoder.encodeBuffer(inputBuffer, 0, bytesRead, outputBuffer)
+            mp3.write(outputBuffer, 0, bytesWritten)
+        }
+        encoder.close()
+        return mp3.toByteArray()
     }
 
     @Synchronized
@@ -71,11 +97,13 @@ class MP3StreamAudioPlayer(
     }
 
     override fun drain(): Boolean {
-        val iS: InputStream = SequenceInputStream(outputList.elements())
-        val inputAStream = AudioInputStream(iS, currentFormat, (totBytes / currentFormat.frameSize).toLong())
-        val bos = ByteArrayOutputStream()
-        AudioSystem.write(inputAStream, outputType, bos)
-        mp3StreamWrapper.inputStream = ByteArrayInputStream(inMemoryConvertToMP3(bos.toByteArray()))
+        val inputStream: InputStream = SequenceInputStream(outputList.elements())
+        val audioInputStream = AudioInputStream(inputStream, currentFormat, (totBytes / currentFormat.frameSize).toLong())
+        val waveOutputStream = ByteArrayOutputStream()
+        AudioSystem.write(audioInputStream, outputType, waveOutputStream)
+        waveOutputStream.toByteArray().inputStream()
+        val waveAudioInputStream = AudioSystem.getAudioInputStream(waveOutputStream.toByteArray().inputStream())
+        mp3StreamWrapper.inputStream = encodeToMp3(waveAudioInputStream).inputStream()
         return true
     }
 

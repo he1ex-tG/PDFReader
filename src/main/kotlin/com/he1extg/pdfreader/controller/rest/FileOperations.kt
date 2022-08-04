@@ -12,7 +12,6 @@ class FileOperations(
     val fileHandler: FileHandler
 ) {
     @GetMapping("/files/{fileName:.+}")
-    @ResponseBody
     fun serveFile(@PathVariable fileName: String): ResponseEntity<Resource> {
         val file: Resource = fileHandler.loadAsResource(fileName)
         return ResponseEntity.ok().header(

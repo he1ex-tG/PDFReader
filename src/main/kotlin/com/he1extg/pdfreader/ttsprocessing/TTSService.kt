@@ -1,5 +1,7 @@
 package com.he1extg.pdfreader.ttsprocessing
 
+import com.sun.speech.freetts.Gender
+import com.sun.speech.freetts.UtteranceProcessor
 import com.sun.speech.freetts.Voice
 import com.sun.speech.freetts.VoiceManager
 import com.sun.speech.freetts.audio.AudioPlayer
