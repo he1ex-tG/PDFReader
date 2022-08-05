@@ -36,6 +36,17 @@
 .fr-view img.fr-bordered, .fr-view .fr-img-caption.fr-bordered img {
   border: solid 5px #CCC; }
 
+.parent-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.child-flex {
+  flex: 0 1 auto;
+  margin: 5px;
+}
+
 .fr-view img.fr-bordered {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
