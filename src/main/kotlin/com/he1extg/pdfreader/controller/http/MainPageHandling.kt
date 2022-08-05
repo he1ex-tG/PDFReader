@@ -21,12 +21,6 @@ class MainPageHandling(
         return "index"
     }
 
-    @GetMapping("/play/{fileName:.+}")
-    fun playFile(@PathVariable fileName: String): String {
-        fileHandler.playAudioFile(fileName)
-        return "redirect:/"
-    }
-
     @PostMapping("/")
     fun handleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String {
         if (!file.isEmpty) {

@@ -68,11 +68,6 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
                     "serveFile",
                     it.fileName.toString()
                 ).build().toUri().toString(),
-                MvcUriComponentsBuilder.fromMethodName(
-                    MainPageHandling::class.java,
-                    "playFile",
-                    it.fileName.toString()
-                ).build().toUri().toString()
             )
         }
         return modelFileInfo
@@ -115,5 +110,4 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
 class HTTPModelFileInfo(
     val name: String,
     val dlURIString: String,
-    val plURIString: String,
 )

@@ -7,8 +7,8 @@
     <title>Главная</title>
     <link rel="stylesheet" th:href="@{nicepage.css}" media="screen">
     <link rel="stylesheet" th:href="@{Главная.css}" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <script class="u-script" type="text/javascript" th:src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" th:src="nicepage.js" defer=""></script>
     <meta name="generator" content="Nicepage 4.15.8, nicepage.com">
     <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
     
@@ -58,7 +58,6 @@
         </div>
         <div class="u-container-style u-expanded-width u-group u-shape-rectangle u-group-2">
           <div class="u-container-layout u-container-layout-2">
-
             <ul class="ul-positioning">
               <li th:each="file : ${files}" class="list-style-none">
                   <div class="u-clearfix u-gutter-0 u-layout-spacing-top-bottom u-layout-wrap u-layout-wrap-1">
@@ -73,8 +72,21 @@
                                       </div>
                                       <div class="u-container-style u-layout-cell u-shape-rectangle u-size-6 u-layout-cell-2">
                                           <div class="u-container-layout u-valign-middle u-container-layout-4">
-                                              <a th:href="${file.plURIString}" class="u-align-center u-border-2 u-border-custom-color-1 u-border-hover-custom-color-2 u-border-no-left u-border-no-right u-btn u-btn-round u-button-style u-custom-color-2 u-hover-custom-color-1 u-radius-50 u-btn-2"><span class="u-file-icon u-icon"><img src="images/748134.png" alt=""></span>&nbsp;​&nbsp;play
+                                              <!--a th:href="${file.plURIString}" class="u-align-center u-border-2 u-border-custom-color-1 u-border-hover-custom-color-2 u-border-no-left u-border-no-right u-btn u-btn-round u-button-style u-custom-color-2 u-hover-custom-color-1 u-radius-50 u-btn-2"><span class="u-file-icon u-icon"><img src="images/748134.png" alt=""></span>&nbsp;​&nbsp;play
+                                              </a-->
+                                              <!--audio id="player" th:src="${file.dlURIString}"></audio-->
+                                              <!--a onclick="document.getElementById('player').play()" class="u-align-center u-border-2 u-border-custom-color-1 u-border-hover-custom-color-2 u-border-no-left u-border-no-right u-btn u-btn-round u-button-style u-custom-color-2 u-hover-custom-color-1 u-radius-50 u-btn-2"><span class="u-file-icon u-icon"><img src="images/748134.png" alt=""></span>&nbsp;​&nbsp;play
+                                              </a-->
+                                              <a th:attr="onclick=|play('${file.dlURIString}')|" class="u-align-center u-border-2 u-border-custom-color-1 u-border-hover-custom-color-2 u-border-no-left u-border-no-right u-btn u-btn-round u-button-style u-custom-color-2 u-hover-custom-color-1 u-radius-50 u-btn-2"><span class="u-file-icon u-icon"><img src="images/748134.png" alt=""></span>&nbsp;​&nbsp;play
                                               </a>
+
+                                              <!--<audio id="player" src="sound.mp3"></audio>
+                                              <div>
+                                                  <button onclick="document.getElementById('player').play()">Воспроизведение</button>
+                                                  <button onclick="document.getElementById('player').pause()">Пауза</button>
+                                                  <button onclick="document.getElementById('player').volume+=0.1">Громкость +</button>
+                                                  <button onclick="document.getElementById('player').volume-=0.1">Громкость -</button>
+                                              </div>-->
                                           </div>
                                       </div>
                                       <div class="u-container-style u-layout-cell u-shape-rectangle u-size-10 u-layout-cell-3">
@@ -129,7 +141,7 @@
         </div><span class="u-align-right u-file-icon u-icon u-icon-5" data-href="https://github.com/he1ex-tG/PDFReader" data-target="_blank"><img src="images/733609.png" alt=""></span>
       </div>
     </section>
-    
+
     
     
     <section class="u-backlink u-clearfix u-grey-80">
@@ -143,5 +155,5 @@
         <span>Website Builder Software</span>
       </a>. 
     </section>
-  
+    <script th:src="player.js"></script>
 </body></html>
