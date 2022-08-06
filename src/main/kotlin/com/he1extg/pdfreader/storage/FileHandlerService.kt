@@ -1,13 +1,10 @@
 package com.he1extg.pdfreader.storage
 
-import com.he1extg.pdfreader.controller.http.MainPageHandling
 import com.he1extg.pdfreader.controller.rest.FileOperations
 import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
-import javazoom.jl.decoder.Bitstream
-import javazoom.jl.decoder.Header
 import javazoom.jl.player.Player
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
@@ -16,8 +13,8 @@ import org.springframework.stereotype.Service
 import org.springframework.util.FileSystemUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
-import java.io.FileInputStream
 import java.io.IOException
+import java.io.InputStream
 import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -34,6 +31,14 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
     @Autowired
     private lateinit var tts: TTS
 
+    override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
+        if (filePDF.isEmpty) {
+            throw StorageException("Failed to store empty file " + filePDF.originalFilename)
+        }
+        val pdfText = pdfReader.extractText(filePDF.inputStream)
+        return tts.stream(pdfText)
+    }
+
     override fun storeAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
@@ -41,9 +46,7 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
             }
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
             val filePath = rootLocation.resolve(fileNameToStore)
-            val pdfText = pdfReader.extractText(filePDF.inputStream)
-            val mp3InputStream = tts.stream(pdfText)
-            Files.copy(mp3InputStream, filePath)
+            Files.copy(convertPDFtoMP3(filePDF), filePath)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + filePDF.originalFilename, e)
         }
