@@ -1,6 +1,6 @@
 package com.he1extg.pdfreader.controller.http
 
-import com.he1extg.pdfreader.storage.FileHandler
+import com.he1extg.pdfreader.controller.rest.FileOperations
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -10,13 +10,13 @@ import java.util.stream.Collectors
 
 @Controller
 class MainPageHandling(
-    val fileHandler: FileHandler
+    val fileOperations: FileOperations
 ) {
     @GetMapping("/")
     fun listUploadedFiles(model: Model): String {
         model.addAttribute(
             "files",
-            fileHandler.loadAllAsModelInfo().collect(Collectors.toList())
+            fileOperations.getFilesList().collect(Collectors.toList())
         )
         return "index"
     }
@@ -24,7 +24,7 @@ class MainPageHandling(
     @PostMapping("/")
     fun handleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String {
         if (!file.isEmpty) {
-            fileHandler.storeAsMP3(file)
+            fileOperations.uploadPDFandConvertToMP3(file)
         }
         return "redirect:/"
     }

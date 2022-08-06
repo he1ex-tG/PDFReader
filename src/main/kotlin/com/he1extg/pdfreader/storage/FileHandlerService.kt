@@ -5,7 +5,6 @@ import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
-import javazoom.jl.player.Player
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -39,7 +38,7 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
         return tts.stream(pdfText)
     }
 
-    override fun storeAsMP3(filePDF: MultipartFile) {
+    override fun storePDFAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
                 throw StorageException("Failed to store empty file " + filePDF.originalFilename)
@@ -91,12 +90,6 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
         } catch (e: MalformedURLException) {
             throw StorageFileNotFoundException("Could not read file: $fileName", e)
         }
-
-    override fun playAudioFile(fileName: String) {
-        val inputStream = loadAsResource(fileName).file.inputStream()
-        val mediaPlayer = Player(inputStream)
-        mediaPlayer.play()
-    }
 
     override fun deleteAll(): Boolean =
         FileSystemUtils.deleteRecursively(rootLocation.toFile())
