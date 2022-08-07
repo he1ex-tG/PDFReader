@@ -15,15 +15,20 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
+import java.nio.channels.Selector
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.util.stream.Collectors
 import java.util.stream.Stream
+import kotlin.io.path.getLastModifiedTime
 
 
 @Service
 class FileHandlerService(properties: StorageProperties) : FileHandler {
     private val rootLocation: Path = Paths.get(properties.uploadDir)
+    private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
     @Autowired
     private lateinit var pdfReader: PDFReader
@@ -38,6 +43,21 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
         return tts.stream(pdfText)
     }
 
+    private fun Path.maxFilesControl(amount: Int) {
+        val filesInDir = Files.list(this).collect(Collectors.toList())
+        if (filesInDir.count() > amount) {
+            val myPathComparator = Comparator<Path> { a, b ->
+                val f1 = a.getLastModifiedTime().toMillis()
+                val f2 = b.getLastModifiedTime().toMillis()
+                if (f1 - f2 >= 0)
+                    1
+                else
+                    -1
+            }
+            Files.delete(filesInDir.minOfWith(myPathComparator) { it })
+        }
+    }
+
     override fun storePDFAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
@@ -45,7 +65,8 @@ class FileHandlerService(properties: StorageProperties) : FileHandler {
             }
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
             val filePath = rootLocation.resolve(fileNameToStore)
-            Files.copy(convertPDFtoMP3(filePDF), filePath)
+            Files.copy(convertPDFtoMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
+            rootLocation.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + filePDF.originalFilename, e)
         }

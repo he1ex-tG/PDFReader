@@ -8,4 +8,5 @@ class StorageProperties {
      * Folder location for storing files
      */
     lateinit var uploadDir: String
+    lateinit var maxFilesToStore: String
 }

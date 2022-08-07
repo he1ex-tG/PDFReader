@@ -5,3 +5,4 @@ spring:
       max-request-size: 128KB
 storage:
   upload-dir: upload_dir_11
+  max-files-to-store: 2
