@@ -1,7 +1,7 @@
 package com.he1extg.pdfreader
 
 import com.he1extg.pdfreader.storage.StorageProperties
-import com.he1extg.pdfreader.storage.FileHandler
+import com.he1extg.pdfreader.storage.StorageHandler
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Bean
 @EnableConfigurationProperties(StorageProperties::class)
 class PdfreaderApplication {
 	@Bean
-	fun init(fileHandler: FileHandler): CommandLineRunner = CommandLineRunner {
-		fileHandler.deleteAll()
-		fileHandler.init()
+	fun init(storageHandler: StorageHandler): CommandLineRunner = CommandLineRunner {
+		storageHandler.deleteAll()
+		storageHandler.init()
 	}
 }
 

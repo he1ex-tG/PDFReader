@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
-import java.nio.channels.Selector
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -26,7 +25,7 @@ import kotlin.io.path.getLastModifiedTime
 
 
 @Service
-class FileHandlerService(properties: StorageProperties) : FileHandler {
+class StorageHandlerService(properties: StorageProperties) : StorageHandler {
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 

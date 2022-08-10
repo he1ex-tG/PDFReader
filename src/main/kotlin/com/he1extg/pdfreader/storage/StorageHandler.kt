@@ -6,7 +6,7 @@ import java.io.InputStream
 import java.nio.file.Path
 import java.util.stream.Stream
 
-interface FileHandler {
+interface StorageHandler {
     fun init()
     fun convertPDFtoMP3(filePDF: MultipartFile): InputStream
     fun storePDFAsMP3(filePDF: MultipartFile)
