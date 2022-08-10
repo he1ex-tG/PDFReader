@@ -2,14 +2,13 @@ package com.he1extg.pdfreader.controller.rest
 
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.storage.StorageHandler
-import com.he1extg.pdfreader.storage.HTTPModelFileInfo
+import com.he1extg.pdfreader.storage.FileInfoList
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.util.stream.Stream
 
 @RestController
 class FileOperations(
@@ -26,8 +25,8 @@ class FileOperations(
     }
 
     @GetMapping("/files")
-    fun getFilesList(): Stream<HTTPModelFileInfo> {
-        return storageHandler.loadAllAsModelInfo()
+    fun getFilesList(): FileInfoList {
+        return storageHandler.loadAllAsFileInfoStream()
     }
 
     @PostMapping("/files")

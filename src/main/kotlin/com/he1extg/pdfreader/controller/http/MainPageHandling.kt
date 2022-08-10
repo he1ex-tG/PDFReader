@@ -16,7 +16,7 @@ class MainPageHandling(
     fun listUploadedFiles(model: Model): String {
         model.addAttribute(
             "files",
-            fileOperations.getFilesList().collect(Collectors.toList())
+            fileOperations.getFilesList().filesInfo
         )
         return "index"
     }

@@ -80,10 +80,10 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
             throw StorageException("Failed to read stored files", e)
         }
 
-    override fun loadAllAsModelInfo(): Stream<FileList> {
+    override fun loadAllAsFileInfoStream(): FileInfoList {
         val storedFiles = loadAll()
-        val modelFileInfo = storedFiles.map {
-            FileList(
+        val filesInfo: List<FileInfo> = storedFiles.map {
+            FileInfo(
                 it.fileName.toString(),
                 MvcUriComponentsBuilder.fromMethodName(
                     FileOperations::class.java,
@@ -91,8 +91,8 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
                     it.fileName.toString()
                 ).build().toUri().toString(),
             )
-        }
-        return modelFileInfo
+        }.collect(Collectors.toList())
+        return FileInfoList(filesInfo)
     }
 
     override fun load(fileName: String): Path =
@@ -123,6 +123,6 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
     }
 }
 
-class FileList(val files: Stream<FileInfo>) {
-    data class FileInfo(val name: String, val dlURIString: String,)
-}
+class FileInfoList(val filesInfo: List<FileInfo>)
+
+data class FileInfo(val name: String, val dlURIString: String,)

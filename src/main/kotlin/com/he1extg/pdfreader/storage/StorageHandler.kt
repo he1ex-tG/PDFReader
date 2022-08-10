@@ -11,7 +11,7 @@ interface StorageHandler {
     fun convertPDFtoMP3(filePDF: MultipartFile): InputStream
     fun storePDFAsMP3(filePDF: MultipartFile)
     fun loadAll(): Stream<Path>
-    fun loadAllAsModelInfo(): Stream<HTTPModelFileInfo>
+    fun loadAllAsFileInfoStream(): FileInfoList
     fun load(fileName: String): Path
     fun loadAsResource(fileName: String): Resource
     fun deleteAll(): Boolean

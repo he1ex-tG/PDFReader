@@ -1,16 +1,12 @@
 package com.he1extg.pdfreader
 
-import com.he1extg.pdfreader.controller.rest.FileOperations
-import com.he1extg.pdfreader.storage.HTTPModelFileInfo
+import com.he1extg.pdfreader.storage.FileInfoList
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PdfreaderApplicationTests(
@@ -23,8 +19,10 @@ class PdfreaderApplicationTests(
 
 	@Test
 	fun `Get files list`() {
-		//val answer: ResponseEntity<Stream<HTTPModelFileInfo>> = restTemplate.getForEntity("/files", Stream::class.java)
-		//assertThat(answer.statusCode).isEqualTo(HttpStatus.OK)
-		//assertThat(answer.count()).isEqualTo(0)
+		//val answer: ResponseEntity<Stream<HTTPModelFileInfo>> = restTemplate.getForEntity("/files", Stream<HTTPModelFileInfo>::class.java)
+		val answer = restTemplate.getForEntity("/files", FileInfoList::class.java)
+		assertThat(answer.statusCode).isEqualTo(HttpStatus.OK)
+		val answerBody = answer.body!!.filesInfo
+		assertThat(answerBody.count()).isEqualTo(0)
 	}
 }
