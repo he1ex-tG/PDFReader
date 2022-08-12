@@ -5,13 +5,19 @@ import com.he1extg.pdfreader.storage.FileInfoList
 import com.he1extg.pdfreader.storage.StorageHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-
+import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.FileUrlResource
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.HttpStatus
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -23,8 +29,21 @@ internal class FileOperationsTest(
     @MockBean
     lateinit var storageHandler: StorageHandler
 
+    val testFileName = "test"
+    @Value("classpath:test/test.mp3")
+    lateinit var resourceMP3: Resource
+    @Value("classpath:test/test.pdf")
+    lateinit var resourcePDF: Resource
+
     @Test
-    fun serveFile() {
+    fun serveFile_existFile() {
+        given(storageHandler.loadAsResource("$testFileName.mp3")).willReturn(resourceMP3)
+
+        val answer = testRestTemplate.getForEntity("/files/$testFileName.mp3", Resource::class.java)
+
+        assertThat(answer.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(answer.headers[CONTENT_DISPOSITION]?.get(0)).contains(testFileName)
+        assertThat(answer.body).isNotNull
     }
 
     @Test
