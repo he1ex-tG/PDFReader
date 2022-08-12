@@ -71,18 +71,17 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
         }
     }
 
-    override fun loadAll(): Stream<Path> =
+    override fun loadAll(): List<Path> =
         try {
             Files.walk(rootLocation, 1)
                 .filter { path -> !path.equals(rootLocation) }
-                .map { path -> rootLocation.relativize(path) }
+                .map { path -> rootLocation.relativize(path) }.collect(Collectors.toList())
         } catch (e: IOException) {
             throw StorageException("Failed to read stored files", e)
         }
 
-    override fun loadAllAsFileInfoStream(): FileInfoList {
-        val storedFiles = loadAll()
-        val filesInfo: List<FileInfo> = storedFiles.map {
+    override fun loadAllAsFileInfoStream() = FileInfoList(
+        loadAll().map {
             FileInfo(
                 it.fileName.toString(),
                 MvcUriComponentsBuilder.fromMethodName(
@@ -91,9 +90,8 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
                     it.fileName.toString()
                 ).build().toUri().toString(),
             )
-        }.collect(Collectors.toList())
-        return FileInfoList(filesInfo)
-    }
+        }
+    )
 
     override fun load(fileName: String): Path =
         rootLocation.resolve(fileName)
