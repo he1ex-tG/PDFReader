@@ -6,6 +6,7 @@ import com.he1extg.pdfreader.storage.FileInfoList
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -30,14 +31,15 @@ class FileOperations(
     }
 
     @PostMapping("/files")
-    fun uploadPDFandConvertToMP3(@RequestParam("file") file: MultipartFile) {
+    fun uploadPDFandConvertToMP3(@RequestParam("file") file: MultipartFile): HttpStatus {
         if (!file.isEmpty) {
             storageHandler.storePDFAsMP3(file)
         }
+        return HttpStatus.OK
     }
 
     @PostMapping("/file")
-    fun convertPDFtoMP3(@RequestParam file: MultipartFile): ResponseEntity<Resource> =
+    fun convertPDFtoMP3(@RequestParam("file") file: MultipartFile): ResponseEntity<Resource> =
         if (!file.isEmpty) {
             val mp3InputStream = storageHandler.convertPDFtoMP3(file)
             ResponseEntity.ok().header(

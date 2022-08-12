@@ -5,19 +5,15 @@ import com.he1extg.pdfreader.storage.FileInfoList
 import com.he1extg.pdfreader.storage.StorageHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.anyString
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.FileUrlResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.HttpStatus
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -80,13 +76,5 @@ internal class FileOperationsTest(
             assertThat(it.filesInfo[0].name).isEqualTo("1.mp3")
             assertThat(it.filesInfo[1].dlURIString).contains("2.mp3")
         }
-    }
-
-    @Test
-    fun uploadPDFandConvertToMP3() {
-    }
-
-    @Test
-    fun convertPDFtoMP3() {
     }
 }
