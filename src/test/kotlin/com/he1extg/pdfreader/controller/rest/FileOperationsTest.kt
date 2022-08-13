@@ -5,15 +5,20 @@ import com.he1extg.pdfreader.storage.FileInfoList
 import com.he1extg.pdfreader.storage.StorageHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.*
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.RequestEntity
+import org.springframework.util.LinkedMultiValueMap
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -33,7 +38,7 @@ internal class FileOperationsTest(
 
     @Test
     fun serveFile_existFile() {
-        given(storageHandler.loadAsResource("$testFileName.mp3")).willReturn(resourceMP3)
+        given(storageHandler.loadAsResource(MockitoHelper.anyObject())).willReturn(resourceMP3)
 
         val answer = testRestTemplate.getForEntity("/files/$testFileName.mp3", Resource::class.java)
 
@@ -77,4 +82,43 @@ internal class FileOperationsTest(
             assertThat(it.filesInfo[1].dlURIString).contains("2.mp3")
         }
     }
+
+    @Test
+    fun uploadPDFandConvertToMP3_normalPDF_requestStatusOK() {
+        val file = ClassPathResource("/test/$testFileName.pdf")
+        val requestEntity = RequestEntity.post("/files")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply { add("file", file) })
+
+        val answer = testRestTemplate.exchange(requestEntity, Nothing::class.java)
+
+        assertThat(answer.statusCode).isEqualTo(HttpStatus.OK)
+    }
+
+    @Test
+    fun convertPDFtoMP3_normalPDF_fileMP3() {
+        val file = ClassPathResource("/test/$testFileName.pdf")
+        val requestEntity = RequestEntity.post("/file")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(LinkedMultiValueMap<String, Any>().apply { add("file", file) })
+        given(storageHandler.convertPDFtoMP3(MockitoHelper.anyObject())).willReturn(resourceMP3.file.inputStream())
+
+        val answer = testRestTemplate.exchange(requestEntity, Resource::class.java)
+
+        assertThat(answer.statusCode).isEqualTo(HttpStatus.OK)
+        assertThat(answer.body).isNotNull
+        answer.body?.let {
+            assertThat(it.contentLength()).isEqualTo(resourceMP3.contentLength())
+            //Player(it.inputStream).play()
+        }
+    }
+}
+
+object MockitoHelper {
+    fun <T> anyObject(): T {
+        Mockito.any<T>()
+        return uninitialized()
+    }
+    @Suppress("UNCHECKED_CAST")
+    fun <T> uninitialized(): T = null as T
 }
