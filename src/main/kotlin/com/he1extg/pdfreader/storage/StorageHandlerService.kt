@@ -34,6 +34,11 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
     @Autowired
     private lateinit var tts: TTS
 
+    init {
+        this.deleteAll()
+        this.init()
+    }
+
     override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
         if (filePDF.isEmpty) {
             throw StorageException("Failed to store empty file " + filePDF.originalFilename)
