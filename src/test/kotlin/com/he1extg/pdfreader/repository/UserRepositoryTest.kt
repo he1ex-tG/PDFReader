@@ -1,7 +1,6 @@
 package com.he1extg.pdfreader.repository
 
 import com.he1extg.pdfreader.entity.User
-import com.he1extg.pdfreader.storage.StorageHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

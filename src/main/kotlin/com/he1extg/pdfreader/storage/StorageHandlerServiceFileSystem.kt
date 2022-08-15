@@ -20,12 +20,11 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.stream.Collectors
-import java.util.stream.Stream
 import kotlin.io.path.getLastModifiedTime
 
 
 @Service
-class StorageHandlerService(properties: StorageProperties) : StorageHandler {
+class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHandler {
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
@@ -33,11 +32,6 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
     private lateinit var pdfReader: PDFReader
     @Autowired
     private lateinit var tts: TTS
-
-    init {
-        this.deleteAll()
-        this.init()
-    }
 
     override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
         if (filePDF.isEmpty) {
