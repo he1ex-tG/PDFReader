@@ -16,25 +16,60 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
     val userRepository: UserRepository,
 ) {
 
+    private val newUser = User("he1ex", "123")
+    private val newStoredFile = StoredFile(
+        ClassPathResource("test/test.mp3").file.name,
+        ClassPathResource("test/test.mp3").file,
+        newUser
+    )
+
     @Test
     fun findByID_return_FileOrNull() {
-        val newUser = User("he1ex", "123")
-        entityManager.persist(newUser)
-
-        val file = ClassPathResource("test/test.mp3")
-        val newStoredFile = StoredFile(file.file.name, file.file, newUser)
-        entityManager.persist(newStoredFile)
-
-        entityManager.flush()
+        entityManager.apply {
+            persist(newUser)
+            persist(newStoredFile)
+        }
 
         val fileList = storedFileRepository.findAll()
         assertThat(fileList.size).isEqualTo(1)
 
-        val answer1 = storedFileRepository.getStoredFileByID(10L)
-        val answer2 = storedFileRepository.getStoredFileByID(2L)
+        val answerNull = storedFileRepository.getStoredFileByID(10L)
+        assertThat(answerNull).isNull()
 
-        assertThat(answer1).isNull()
-        assertThat(answer2).isNotNull
-        assertThat(answer2?.FileName).isEqualTo(newStoredFile.FileName)
+
+        val answerNotNull = storedFileRepository.getStoredFileByID(fileList[0].ID!!)
+        assertThat(answerNotNull).isNotNull
+        assertThat(answerNotNull?.fileName).isEqualTo(newStoredFile.fileName)
+    }
+
+    @Test
+    fun findAll_return_FileListOrEmptyList() {
+        val fileListEmpty = storedFileRepository.findAll()
+        assertThat(fileListEmpty.size).isEqualTo(0)
+
+        entityManager.apply {
+            persist(newUser)
+            persist(newStoredFile)
+        }
+
+        val fileList = storedFileRepository.findAll()
+        assertThat(fileList.size).isEqualTo(1)
+    }
+
+    @Test
+    fun getStoredFilesByOwnerID_return_FileListOrEmptyList() {
+        entityManager.apply {
+            persist(newUser)
+            persist(newStoredFile)
+        }
+
+        val userList = userRepository.findAll()
+        assertThat(userList.size).isEqualTo(1)
+
+        val fileListEmpty = storedFileRepository.getStoredFileByOwnerID(10L)
+        assertThat(fileListEmpty.size).isEqualTo(0)
+
+        val fileList = storedFileRepository.getStoredFileByOwnerID(userList[0].ID!!)
+        assertThat(fileList.size).isEqualTo(1)
     }
 }

@@ -6,7 +6,7 @@ import javax.persistence.Id
 
 @Entity
 class User(
-    var Login: String,
-    var Password: String,
+    var login: String,
+    var password: String,
     @Id @GeneratedValue var ID: Long? = null,
 )

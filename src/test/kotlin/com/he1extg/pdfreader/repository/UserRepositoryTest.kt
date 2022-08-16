@@ -13,17 +13,17 @@ class UserRepositoryTest @Autowired constructor(
     val userRepository: UserRepository,
 ) {
 
+    private val newUser = User("he1ex", "111")
+
     @Test
     fun findByID_return_UserOrNull() {
-        val newUser = User("he1ex", "111")
         entityManager.persist(newUser)
-        entityManager.flush()
 
         val dataAnswerUser = userRepository.findByID(1L)
-        val dataAnswerNull = userRepository.findByID(10L)
-
         assertThat(dataAnswerUser).isNotNull
-        assertThat(dataAnswerUser?.Login).isEqualTo(newUser.Login)
+        assertThat(dataAnswerUser?.login).isEqualTo(newUser.login)
+
+        val dataAnswerNull = userRepository.findByID(10L)
         assertThat(dataAnswerNull).isNull()
     }
 }

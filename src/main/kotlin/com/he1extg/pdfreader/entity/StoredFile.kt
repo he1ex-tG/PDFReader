@@ -8,8 +8,8 @@ import javax.persistence.ManyToOne
 
 @Entity
 class StoredFile(
-    var FileName: String,
-    var File: File,
+    var fileName: String,
+    var file: File,
     @ManyToOne var owner: User,
     @Id @GeneratedValue var ID: Long? = null,
 )
