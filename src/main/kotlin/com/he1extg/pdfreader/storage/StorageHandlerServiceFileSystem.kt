@@ -33,7 +33,7 @@ class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHa
     @Autowired
     private lateinit var tts: TTS
 
-    override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
+    override fun convertPdfToMP3(filePDF: MultipartFile): InputStream {
         if (filePDF.isEmpty) {
             throw StorageException("Failed to store empty file " + filePDF.originalFilename)
         }
@@ -56,14 +56,14 @@ class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHa
         }
     }
 
-    override fun storePDFAsMP3(filePDF: MultipartFile) {
+    override fun storePdfAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
                 throw StorageException("Failed to store empty file " + filePDF.originalFilename)
             }
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
             val filePath = rootLocation.resolve(fileNameToStore)
-            Files.copy(convertPDFtoMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(convertPdfToMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
             rootLocation.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + filePDF.originalFilename, e)

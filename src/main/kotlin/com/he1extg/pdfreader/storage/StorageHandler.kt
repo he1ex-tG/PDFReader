@@ -6,8 +6,8 @@ import java.io.InputStream
 
 interface StorageHandler {
     fun init()
-    fun convertPDFtoMP3(filePDF: MultipartFile): InputStream
-    fun storePDFAsMP3(filePDF: MultipartFile)
+    fun convertPdfToMP3(filePDF: MultipartFile): InputStream
+    fun storePdfAsMP3(filePDF: MultipartFile)
     fun loadAllAsFileInfoStream(): FileInfoList
     fun loadAsResource(fileName: String): Resource
     fun deleteAll(): Boolean

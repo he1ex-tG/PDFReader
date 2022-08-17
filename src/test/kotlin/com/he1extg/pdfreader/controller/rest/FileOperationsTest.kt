@@ -101,7 +101,7 @@ internal class FileOperationsTest(
         val requestEntity = RequestEntity.post("/file")
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(LinkedMultiValueMap<String, Any>().apply { add("file", file) })
-        given(storageHandler.convertPDFtoMP3(MockitoHelper.anyObject())).willReturn(resourceMP3.file.inputStream())
+        given(storageHandler.convertPdfToMP3(MockitoHelper.anyObject())).willReturn(resourceMP3.file.inputStream())
 
         val answer = testRestTemplate.exchange(requestEntity, Resource::class.java)
 

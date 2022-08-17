@@ -5,6 +5,15 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.12.RELEASE"
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
+
+	/**
+	 * Database
+	 */
+	id("org.jetbrains.kotlin.plugin.noarg") version "1.6.21"
+}
+
+noArg {
+	annotation("javax.persistence.Entity")
 }
 
 allOpen {
@@ -36,8 +45,8 @@ dependencies {
 
 	implementation("net.sourceforge.lame:lame:3.98.4")
 
-	/*
-	Database
+	/**
+	 * Database
 	 */
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("com.h2database:h2")

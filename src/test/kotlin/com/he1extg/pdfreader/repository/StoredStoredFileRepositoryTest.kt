@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.core.io.ClassPathResource
-import org.springframework.jdbc.core.PreparedStatementCreator
 
 @DataJpaTest
 class StoredStoredFileRepositoryTest @Autowired constructor(
@@ -71,5 +70,20 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
 
         val fileList = storedFileRepository.getStoredFileByOwnerID(userList[0].ID!!)
         assertThat(fileList.size).isEqualTo(1)
+    }
+
+    @Test
+    fun getStoredFileByFileName_return_FileOrNull() {
+        entityManager.apply {
+            persist(newUser)
+            persist(newStoredFile)
+        }
+
+        val fileEmpty = storedFileRepository.getStoredFileByFileName("asd")
+        assertThat(fileEmpty).isNull()
+
+        val file = storedFileRepository.getStoredFileByFileName("test.mp3")
+        assertThat(file!!.owner).isEqualTo(newUser)
+        //Player(ByteArrayInputStream(file.file)).play()
     }
 }

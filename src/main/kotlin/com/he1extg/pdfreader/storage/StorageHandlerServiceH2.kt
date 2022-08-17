@@ -10,8 +10,10 @@ import com.he1extg.pdfreader.repository.UserRepository
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Primary
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
+import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.io.IOException
@@ -19,7 +21,8 @@ import java.io.InputStream
 import java.net.MalformedURLException
 import java.nio.file.Path
 
-//@Service
+@Service
+@Primary
 class StorageHandlerServiceH2(
     val userRepository: UserRepository,
     val storedFileRepository: StoredFileRepository,
@@ -37,7 +40,7 @@ class StorageHandlerServiceH2(
         userRepository.save(userAdmin)
     }
 
-    override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
+    override fun convertPdfToMP3(filePDF: MultipartFile): InputStream {
         if (filePDF.isEmpty) {
             throw StorageException("Failed to store empty file " + filePDF.originalFilename)
         }
@@ -49,13 +52,13 @@ class StorageHandlerServiceH2(
         TODO("Not yet implemented")
     }
 
-    override fun storePDFAsMP3(filePDF: MultipartFile) {
+    override fun storePdfAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
                 throw StorageException("Failed to store empty file " + filePDF.originalFilename)
             }
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
-            val fileToStore = convertPDFtoMP3(filePDF)
+            val fileToStore = convertPdfToMP3(filePDF)
 
             val newFileToStore = StoredFile(fileNameToStore, fileToStore.readBytes(), owner = userAdmin)
             storedFileRepository.save(newFileToStore)
@@ -83,7 +86,9 @@ class StorageHandlerServiceH2(
         try {
             val storedFile = storedFileRepository.getStoredFileByFileName(fileName)
             if (storedFile != null) {
-                val resource: Resource = ByteArrayResource(storedFile.file)
+                val resource: Resource = object : ByteArrayResource(storedFile.file, storedFile.fileName) {
+                    override fun getFilename(): String = storedFile.fileName
+                }
                 resource
             } else {
                 throw StorageFileNotFoundException("Could not find file: $fileName")
