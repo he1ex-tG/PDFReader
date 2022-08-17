@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class StorageHandlerServiceFileSystemConfig {
+class StorageHandlerServiceConfig {
 
     @Bean
     fun init(storageHandler: StorageHandler) = ApplicationRunner {

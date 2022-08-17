@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.core.io.ClassPathResource
+import org.springframework.jdbc.core.PreparedStatementCreator
 
 @DataJpaTest
 class StoredStoredFileRepositoryTest @Autowired constructor(
@@ -15,12 +16,11 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
     val storedFileRepository: StoredFileRepository,
     val userRepository: UserRepository,
 ) {
-
     private val newUser = User("he1ex", "123")
     private val newStoredFile = StoredFile(
         ClassPathResource("test/test.mp3").file.name,
-        ClassPathResource("test/test.mp3").file,
-        newUser
+        ClassPathResource("test/test.mp3").file.readBytes(),
+        owner = newUser
     )
 
     @Test

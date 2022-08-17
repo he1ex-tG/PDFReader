@@ -70,7 +70,7 @@ class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHa
         }
     }
 
-    override fun loadAll(): List<Path> =
+    private fun loadAll(): List<Path> =
         try {
             Files.walk(rootLocation, 1)
                 .filter { path -> !path.equals(rootLocation) }
@@ -92,12 +92,9 @@ class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHa
         }
     )
 
-    override fun load(fileName: String): Path =
-        rootLocation.resolve(fileName)
-
     override fun loadAsResource(fileName: String): Resource =
         try {
-            val file: Path = load(fileName)
+            val file: Path = rootLocation.resolve(fileName)
             val resource: Resource = UrlResource(file.toUri())
             if (resource.exists() || resource.isReadable) {
                 resource
