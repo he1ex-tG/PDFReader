@@ -6,6 +6,7 @@ import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -25,8 +26,9 @@ import kotlin.io.path.getLastModifiedTime
 
 
 @Service
+@EnableConfigurationProperties(StoragePropertiesFileStorage::class)
 @Profile("filestorage")
-class StorageHandlerServiceFileSystem(properties: StorageProperties) : StorageHandler {
+class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) : StorageHandler {
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 

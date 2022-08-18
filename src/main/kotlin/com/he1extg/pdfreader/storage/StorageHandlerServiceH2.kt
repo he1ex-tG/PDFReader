@@ -10,6 +10,7 @@ import com.he1extg.pdfreader.repository.UserRepository
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
@@ -19,14 +20,17 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
-import java.nio.file.Path
+
 
 @Service
+@EnableConfigurationProperties(StoragePropertiesH2Database::class)
 @Profile("h2database")
 class StorageHandlerServiceH2(
+    properties: StoragePropertiesH2Database,
     val userRepository: UserRepository,
     val storedFileRepository: StoredFileRepository,
 ) : StorageHandler {
+    private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
     @Autowired
     private lateinit var pdfReader: PDFReader
@@ -48,8 +52,15 @@ class StorageHandlerServiceH2(
         return tts.stream(pdfText)
     }
 
-    private fun Path.maxFilesControl(amount: Int) {
-        TODO("Not yet implemented")
+    private fun StoredFileRepository.maxFilesControl(amount: Int) {
+        val storedFiles = this.findAll()
+        if (storedFiles.size > amount) {
+            val myTimestampComparator = Comparator<StoredFile> { a, b -> a.timestamp.compareTo(b.timestamp) }
+            val id = storedFiles.minOfWith(myTimestampComparator) { it }.ID
+            id?.let {
+                this.deleteById(id)
+            } ?: throw Exception("Internal H2 database error! File ID is null.")
+        }
     }
 
     override fun storePdfAsMP3(filePDF: MultipartFile) {
@@ -63,7 +74,7 @@ class StorageHandlerServiceH2(
             val newFileToStore = StoredFile(fileNameToStore, fileToStore.readBytes(), owner = userAdmin)
             storedFileRepository.save(newFileToStore)
 
-            //rootLocation.maxFilesControl(maxFilesToStore)
+            storedFileRepository.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + filePDF.originalFilename, e)
         }
