@@ -12,4 +12,5 @@ class StorageHandlerServiceConfig {
         storageHandler.deleteAll()
         storageHandler.init()
     }
+
 }

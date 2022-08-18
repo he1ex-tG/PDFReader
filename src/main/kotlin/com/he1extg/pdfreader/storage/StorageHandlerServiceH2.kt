@@ -10,7 +10,7 @@ import com.he1extg.pdfreader.repository.UserRepository
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
@@ -22,7 +22,7 @@ import java.net.MalformedURLException
 import java.nio.file.Path
 
 @Service
-@Primary
+@Profile("h2database")
 class StorageHandlerServiceH2(
     val userRepository: UserRepository,
     val storedFileRepository: StoredFileRepository,

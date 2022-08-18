@@ -1,0 +1,6 @@
+storage:
+  upload-dir: upload_dir_11
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none

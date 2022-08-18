@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: db_admin
+    password: db_pass
+    driverClassName: org.h2.Driver
+  h2:
+    console.enabled: true

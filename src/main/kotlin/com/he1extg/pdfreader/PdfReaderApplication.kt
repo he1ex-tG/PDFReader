@@ -10,5 +10,7 @@ import org.springframework.boot.runApplication
 class PdfReaderApplication
 
 fun main(args: Array<String>) {
-	runApplication<PdfReaderApplication>(*args)
+	runApplication<PdfReaderApplication>(*args) {
+		setAdditionalProfiles("h2database")
+	}
 }
