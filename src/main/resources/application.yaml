@@ -1,8 +1,11 @@
 spring:
+  profiles:
+    #Prifile is defined in PdfReaderApplication.kt (main)
+    #active: h2database
+    #active: filestorage
   servlet:
     multipart:
       max-file-size: 128KB
       max-request-size: 128KB
 storage:
-  upload-dir: upload_dir_11
   max-files-to-store: 2

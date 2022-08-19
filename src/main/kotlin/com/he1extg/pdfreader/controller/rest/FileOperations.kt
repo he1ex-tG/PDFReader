@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile
 class FileOperations(
     val storageHandler: StorageHandler
 ) {
-    /**/
     @GetMapping("/files/{fileName:.+}")
     fun serveFile(@PathVariable fileName: String): ResponseEntity<Resource> {
         val file: Resource = storageHandler.loadAsResource(fileName)
@@ -31,17 +30,17 @@ class FileOperations(
     }
 
     @PostMapping("/files")
-    fun uploadPDFandConvertToMP3(@RequestParam("file") file: MultipartFile): HttpStatus {
+    fun uploadPdfAndConvertToMP3(@RequestParam("file") file: MultipartFile): HttpStatus {
         if (!file.isEmpty) {
-            storageHandler.storePDFAsMP3(file)
+            storageHandler.storePdfAsMP3(file)
         }
         return HttpStatus.OK
     }
 
     @PostMapping("/file")
-    fun convertPDFtoMP3(@RequestParam("file") file: MultipartFile): ResponseEntity<Resource> =
+    fun convertPdfToMP3(@RequestParam("file") file: MultipartFile): ResponseEntity<Resource> =
         if (!file.isEmpty) {
-            val mp3InputStream = storageHandler.convertPDFtoMP3(file)
+            val mp3InputStream = storageHandler.convertPdfToMP3(file)
             ResponseEntity.ok().header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 ""

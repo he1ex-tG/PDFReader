@@ -6,6 +6,8 @@ import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Profile
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
@@ -20,12 +22,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.stream.Collectors
-import java.util.stream.Stream
 import kotlin.io.path.getLastModifiedTime
 
-
 @Service
-class StorageHandlerService(properties: StorageProperties) : StorageHandler {
+@EnableConfigurationProperties(StoragePropertiesFileStorage::class)
+@Profile("filestorage")
+class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) : StorageHandler {
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
@@ -34,7 +36,7 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
     @Autowired
     private lateinit var tts: TTS
 
-    override fun convertPDFtoMP3(filePDF: MultipartFile): InputStream {
+    override fun convertPdfToMP3(filePDF: MultipartFile): InputStream {
         if (filePDF.isEmpty) {
             throw StorageException("Failed to store empty file " + filePDF.originalFilename)
         }
@@ -57,21 +59,21 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
         }
     }
 
-    override fun storePDFAsMP3(filePDF: MultipartFile) {
+    override fun storePdfAsMP3(filePDF: MultipartFile) {
         try {
             if (filePDF.isEmpty) {
                 throw StorageException("Failed to store empty file " + filePDF.originalFilename)
             }
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
             val filePath = rootLocation.resolve(fileNameToStore)
-            Files.copy(convertPDFtoMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(convertPdfToMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
             rootLocation.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
             throw StorageException("Failed to store file " + filePDF.originalFilename, e)
         }
     }
 
-    override fun loadAll(): List<Path> =
+    private fun loadAll(): List<Path> =
         try {
             Files.walk(rootLocation, 1)
                 .filter { path -> !path.equals(rootLocation) }
@@ -93,12 +95,9 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
         }
     )
 
-    override fun load(fileName: String): Path =
-        rootLocation.resolve(fileName)
-
     override fun loadAsResource(fileName: String): Resource =
         try {
-            val file: Path = load(fileName)
+            val file: Path = rootLocation.resolve(fileName)
             val resource: Resource = UrlResource(file.toUri())
             if (resource.exists() || resource.isReadable) {
                 resource
@@ -120,7 +119,3 @@ class StorageHandlerService(properties: StorageProperties) : StorageHandler {
         }
     }
 }
-
-class FileInfoList(val filesInfo: List<FileInfo>)
-
-data class FileInfo(val name: String, val dlURIString: String,)

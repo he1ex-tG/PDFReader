@@ -5,6 +5,21 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.12.RELEASE"
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
+
+	/**
+	 * Database
+	 */
+	id("org.jetbrains.kotlin.plugin.noarg") version "1.6.21"
+}
+
+noArg {
+	annotation("javax.persistence.Entity")
+}
+
+allOpen {
+	annotation("javax.persistence.Entity")
+	annotation("javax.persistence.Embeddable")
+	annotation("javax.persistence.MappedSuperclass")
 }
 
 group = "com.he1ex-tg"
@@ -29,6 +44,12 @@ dependencies {
 	implementation("com.sipgate:mp3-wav:1.0.4")
 
 	implementation("net.sourceforge.lame:lame:3.98.4")
+
+	/**
+	 * Database
+	 */
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly("com.h2database:h2")
 }
 
 tasks.withType<KotlinCompile> {
