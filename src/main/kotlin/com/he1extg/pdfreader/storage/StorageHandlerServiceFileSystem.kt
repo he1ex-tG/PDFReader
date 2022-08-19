@@ -24,7 +24,6 @@ import java.nio.file.StandardCopyOption
 import java.util.stream.Collectors
 import kotlin.io.path.getLastModifiedTime
 
-
 @Service
 @EnableConfigurationProperties(StoragePropertiesFileStorage::class)
 @Profile("filestorage")

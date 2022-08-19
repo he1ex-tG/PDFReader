@@ -3,7 +3,6 @@ package com.he1extg.pdfreader.storage
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Profile
 
-
 @ConfigurationProperties(prefix = "storage")
 @Profile("h2database")
 class StoragePropertiesH2Database {

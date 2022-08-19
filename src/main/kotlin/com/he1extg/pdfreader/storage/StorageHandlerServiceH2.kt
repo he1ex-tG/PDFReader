@@ -21,7 +21,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
 
-
 @Service
 @EnableConfigurationProperties(StoragePropertiesH2Database::class)
 @Profile("h2database")

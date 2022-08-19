@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile
 class FileOperations(
     val storageHandler: StorageHandler
 ) {
-    /**/
     @GetMapping("/files/{fileName:.+}")
     fun serveFile(@PathVariable fileName: String): ResponseEntity<Resource> {
         val file: Resource = storageHandler.loadAsResource(fileName)
