@@ -4,7 +4,7 @@ import com.he1extg.pdfreader.entity.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetailsImpl(
+class UserDetailsFromUserEntity(
      user: User,
 ) : UserDetails {
 

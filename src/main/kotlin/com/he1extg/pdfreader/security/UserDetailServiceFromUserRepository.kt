@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserDetailServiceImpl : UserDetailsService {
+class UserDetailServiceFromUserRepository : UserDetailsService {
 
     @Autowired
     lateinit var userRepository: UserRepository

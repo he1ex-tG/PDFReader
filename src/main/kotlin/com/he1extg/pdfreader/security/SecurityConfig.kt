@@ -1,5 +1,6 @@
 package com.he1extg.pdfreader.security
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -9,13 +10,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(
-    val userDetailsService: UserDetailsService,
-) : WebSecurityConfigurerAdapter() {
+class SecurityConfig : WebSecurityConfigurerAdapter() {
+
+    @Autowired
+    lateinit var userDetailsService: UserDetailsService
 
     override fun configure(http: HttpSecurity) {
         http
@@ -31,16 +32,12 @@ class SecurityConfig(
     }
 
     @Bean
-    protected fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(12)
-    }
+    protected fun passwordEncoder() = BCryptPasswordEncoder(12)
 
     @Bean
-    protected fun daoAuthenticationProvider(): DaoAuthenticationProvider {
-        val daoAuthenticationProvider = DaoAuthenticationProvider().apply {
+    protected fun daoAuthenticationProvider() = DaoAuthenticationProvider()
+        .apply {
             setPasswordEncoder(passwordEncoder())
             setUserDetailsService(userDetailsService)
         }
-        return daoAuthenticationProvider
-    }
 }
