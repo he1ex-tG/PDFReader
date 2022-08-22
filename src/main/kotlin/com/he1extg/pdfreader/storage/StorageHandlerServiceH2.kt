@@ -7,6 +7,8 @@ import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.repository.StoredFileRepository
 import com.he1extg.pdfreader.repository.UserRepository
+import com.he1extg.pdfreader.security.UserRole
+import com.he1extg.pdfreader.security.UserStatus
 import com.he1extg.pdfreader.ttsprocessing.PDFReader
 import com.he1extg.pdfreader.ttsprocessing.TTS
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,7 +39,12 @@ class StorageHandlerServiceH2(
     private lateinit var tts: TTS
 
     // !!! Temporary solution
-    private val userAdmin = User("admin", "admin")
+    private val userAdmin = User(
+        "admin",
+        /*admin*/"\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
+        UserRole.USER,
+        UserStatus.ACTIVE
+    )
 
     override fun init() {
         userRepository.save(userAdmin)
