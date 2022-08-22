@@ -41,8 +41,6 @@ dependencies {
 
 	implementation("net.sf.sociaal:freetts:1.2.2")
 	implementation("com.itextpdf:itextpdf:5.0.6")
-	implementation("com.sipgate:mp3-wav:1.0.4")
-
 	implementation("net.sourceforge.lame:lame:3.98.4")
 
 	/**
@@ -50,6 +48,12 @@ dependencies {
 	 */
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("com.h2database:h2")
+
+	/**
+	 * Spring Security
+	 */
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<KotlinCompile> {
