@@ -8,13 +8,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class UserDetailServiceFromUserRepository : UserDetailsService {
+class UserDetailServiceImpl : UserDetailsService {
 
     @Autowired
     lateinit var userRepository: UserRepository
 
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository.findByLogin(username) ?: throw UsernameNotFoundException("User doesn't exists")
-        return UserDetailsFromUserEntity(user)
+        return UserDetailsImpl(user)
     }
 }

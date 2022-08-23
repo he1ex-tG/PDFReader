@@ -27,4 +27,14 @@ class MainPageHandling(
         }
         return "redirect:/"
     }
+
+    @GetMapping("/login")
+    fun signin(): String {
+        return "login"
+    }
+
+    @GetMapping("/signup")
+    fun registration(): String {
+        return "signup"
+    }
 }
