@@ -12,22 +12,27 @@ This project is a service designed to convert PDF files to MP3 audio format.
 It consists of two components:
 
 - [Frontend](#frontend) 
-- Backend
+- [Backend](#backend)
 
 You can get the conversion result using both the web interface and/or the 
 REST API. It also provides the opportunity to store the converted files on 
 the server. 
 
-Technologies used:
+## Technologies used:
+
 1. [Spring Boot](https://spring.io/projects/spring-boot)
-2. [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-3. [H2 Database](https://www.h2database.com/html/main.html)
-4. [FreeTTS](https://freetts.sourceforge.io/)
-5. [Lame](https://lame.sourceforge.io/)
+2. [Thymeleaf](https://www.thymeleaf.org/)
+3. [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+4. [H2 Database](https://www.h2database.com/html/main.html)
+5. [FreeTTS](https://freetts.sourceforge.io/)
+6. [Lame](https://lame.sourceforge.io/)
+7. [Nicepage - For autogenerate html and css](https://nicepage.com/)
 
 ## Frontend
+
 The main page looks like this:
 
+!!! ДОБАВИТЬ ЧТО-ТО ТИПА "КАРТИНКА ДЛЯ КРАСОТЫ"
 [Screenshot here]
 
 As you can see, the interface is quite simple and straightforward. The PDF 
@@ -35,6 +40,56 @@ file is selected via a dialog box. The conversion process starts after
 pressing the "Convert" button. The produced MP3 files are displayed in the 
 list below. Each file can be played on the page or downloaded to local 
 storage.
+
+I don't really enjoy creating UI, so I used [Nicepage](https://nicepage.com/) 
+to create the pages. By doing this, I visualized the process of creating html 
+pages and saved myself from having to manually write styles. 
+
+!!! ДОБАВИТЬ ПРО МОБИЛЫ И ПЛАНШЕТЫ
+
+To process the results of requests to the REST API and display them on the 
+page, I used [Thymeleaf](https://www.thymeleaf.org/): displaying a list of 
+files and automatically creating links.
+
+## Backend
+
+The entire Backend is written in Kotlin. It can be divided into several main 
+parts: API, file storage, converter.
+
+### 1. API
+
+The API is built using the features provided by [Spring Boot](https://spring.io/projects/spring-boot). 
+It provides some endpoints that can be used by third party services:
+- GET /files: Get a list of files uploaded by the user
+- GET /files/fileName: Download file
+- POST /files: Upload PDF file, convert it and store on serverside
+- POST /file: Upload PDF file, convert it and download result without storing
+
+The API interacts with methods declared in the StorageHandler interface.
+
+### 2. File storage
+
+As mentioned above, work with file storage is carried out through the 
+interface. This makes it possible to choose how files are stored. In the 
+first edition, files were stored in a directory on the file system. Later, 
+I added another implementation of the interface. The files are now stored in
+the H2 database. Both implementations are currently available and can be 
+used by specifying the appropriate __profile__: "filestorage" or "h2database".
+
+The use of the second implementation (__profile__: "h2database") is
+preferred because In addition to files, the database stores user data. 
+This makes it possible to determine the ownership of files by a particular 
+user, and is also necessary (in the future) for user authentication and
+authorisation.
+
+Interaction with [H2 Database](https://www.h2database.com/html/main.html) is 
+implemented using [Spring Data JPA](https://spring.io/projects/spring-data-jpa):
+the necessary entities are created, as well as repositories for working with 
+these entities.
+
+
+
+
 
 
 
