@@ -28,13 +28,18 @@ class MainPageHandling(
         return "redirect:/"
     }
 
-    @GetMapping("/login")
+    @GetMapping("/auth/login")
     fun signin(): String {
         return "login"
     }
 
-    @GetMapping("/signup")
+    @GetMapping("/user/signup")
     fun registration(): String {
         return "signup"
+    }
+
+    @GetMapping("/auth/logout")
+    fun logout(): String {
+        return "logout"
     }
 }

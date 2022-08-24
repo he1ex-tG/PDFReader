@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Configuration
 @EnableWebSecurity
@@ -21,10 +22,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .csrf().disable()
-            .authorizeRequests()
+            //.antMatcher("/**")
+            /*.authorizeRequests()
             .anyRequest().authenticated()
             .and()
-            .httpBasic()
+            .formLogin()
+            .loginPage("/auth/login").permitAll()
+            .defaultSuccessUrl("/user/success")
+            .and()
+            .logout()
+            .logoutRequestMatcher(AntPathRequestMatcher("/auth/logout", "POST"))
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID")
+            .logoutSuccessUrl("/auth/login")*/
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
