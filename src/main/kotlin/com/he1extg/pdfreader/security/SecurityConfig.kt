@@ -22,20 +22,20 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
             .csrf().disable()
-            //.antMatcher("/**")
-            /*.authorizeRequests()
-            .anyRequest().authenticated()
+                .authorizeRequests()
+                .antMatchers("/css/**", "/images/**", "/js/**").permitAll()
+                .anyRequest().authenticated()
             .and()
-            .formLogin()
-            .loginPage("/auth/login").permitAll()
-            .defaultSuccessUrl("/user/success")
+                .formLogin()
+                .loginPage("/auth/login").permitAll()
+                .defaultSuccessUrl("/")
             .and()
-            .logout()
-            .logoutRequestMatcher(AntPathRequestMatcher("/auth/logout", "POST"))
-            .invalidateHttpSession(true)
-            .clearAuthentication(true)
-            .deleteCookies("JSESSIONID")
-            .logoutSuccessUrl("/auth/login")*/
+                .logout()
+                .logoutRequestMatcher(AntPathRequestMatcher("/auth/logout", "POST"))
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/auth/login?logout")
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
