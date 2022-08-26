@@ -36,14 +36,14 @@ class MainPageHandling(
         return "login"
     }
 
-    @GetMapping("/auth/logout")
+    /*@GetMapping("/auth/logout")
     fun logout(request: HttpServletRequest): String {
-        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+        /*val authentication: Authentication? = SecurityContextHolder.getContext().authentication
         if (authentication != null) {
             request.session.invalidate()
-        }
+        }*/
         // ?logout where? ))
         // return "redirect:/auth/login?logout"
         return "redirect:/"
-    }
+    }*/
 }
