@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserDetailsImpl(
-     user: User,
+    user: User,
 ) : UserDetails {
 
     private val username = user.login

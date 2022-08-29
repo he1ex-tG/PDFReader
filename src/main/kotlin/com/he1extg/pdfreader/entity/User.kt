@@ -5,6 +5,7 @@ import com.he1extg.pdfreader.security.UserStatus
 import javax.persistence.*
 
 @Entity
+@Table(name = "Users")
 class User(
     var login: String,
     var password: String,
