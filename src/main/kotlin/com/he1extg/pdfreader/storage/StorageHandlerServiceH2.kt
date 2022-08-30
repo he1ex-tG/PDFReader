@@ -16,6 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
@@ -38,16 +39,23 @@ class StorageHandlerServiceH2(
     @Autowired
     private lateinit var tts: TTS
 
-    // !!! Temporary solution
-    private val userAdmin = User(
-        "admin",
-        /*admin*/"\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
-        UserRole.USER,
-        UserStatus.ACTIVE
-    )
-
     override fun init() {
-        userRepository.save(userAdmin)
+        userRepository.save(
+            User(
+                "admin",
+                /*admin*/"\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
+                UserRole.USER,
+                UserStatus.ACTIVE
+            )
+        )
+        userRepository.save(
+            User(
+                "anonymousUser",
+                "",
+                null,
+                null
+            )
+        )
     }
 
     override fun convertPdfToMP3(filePDF: MultipartFile): InputStream {
@@ -59,7 +67,7 @@ class StorageHandlerServiceH2(
     }
 
     private fun StoredFileRepository.maxFilesControl(amount: Int) {
-        val storedFiles = this.findAll()
+        val storedFiles = this.getStoredFileByOwnerLogin(SecurityContextHolder.getContext().authentication.name)
         if (storedFiles.size > amount) {
             val myTimestampComparator = Comparator<StoredFile> { a, b -> a.timestamp.compareTo(b.timestamp) }
             val id = storedFiles.minOfWith(myTimestampComparator) { it }.ID
@@ -77,7 +85,9 @@ class StorageHandlerServiceH2(
             val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
             val fileToStore = convertPdfToMP3(filePDF)
 
-            val newFileToStore = StoredFile(fileNameToStore, fileToStore.readBytes(), owner = userAdmin)
+            val fileOwner = userRepository.findByLogin(SecurityContextHolder.getContext().authentication.name)
+
+            val newFileToStore = StoredFile(fileNameToStore, fileToStore.readBytes(), owner = fileOwner!!)
             storedFileRepository.save(newFileToStore)
 
             storedFileRepository.maxFilesControl(maxFilesToStore)
@@ -87,7 +97,7 @@ class StorageHandlerServiceH2(
     }
 
     override fun loadAllAsFileInfoStream() = FileInfoList(
-        storedFileRepository.findAll().map {
+        storedFileRepository.getStoredFileByOwnerLogin(SecurityContextHolder.getContext().authentication.name).map {
             FileInfo(
                 it.fileName,
                 MvcUriComponentsBuilder.fromMethodName(

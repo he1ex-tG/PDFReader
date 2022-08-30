@@ -6,7 +6,7 @@ import java.util.stream.Collectors
 enum class UserRole(
     private val permissions: Set<UserPermission>
 ) {
-    USER(setOf(UserPermission.DEFAULT));
+    USER(setOf(UserPermission.ROLE_DEFAULT));
 
     val authorities: Set<SimpleGrantedAuthority>
         get() = permissions.stream()
