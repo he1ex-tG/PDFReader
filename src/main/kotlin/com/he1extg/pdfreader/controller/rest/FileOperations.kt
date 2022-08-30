@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
+@RequestMapping("/files")
 class FileOperations(
     val storageHandler: StorageHandler
 ) {
-    @GetMapping("/files/{fileName:.+}")
+    @GetMapping("/{fileName:.+}")
     fun serveFile(@PathVariable fileName: String): ResponseEntity<Resource> {
         val file: Resource = storageHandler.loadAsResource(fileName)
         return ResponseEntity.ok().header(
@@ -24,12 +25,12 @@ class FileOperations(
         ).body(file)
     }
 
-    @GetMapping("/files")
+    @GetMapping("")
     fun getFilesList(): FileInfoList {
         return storageHandler.loadAllAsFileInfoStream()
     }
 
-    @PostMapping("/files")
+    @PostMapping("")
     fun uploadPdfAndConvertToMP3(@RequestParam("file") file: MultipartFile): HttpStatus {
         if (!file.isEmpty) {
             storageHandler.storePdfAsMP3(file)
