@@ -33,7 +33,7 @@ class MainPageHandling(
         return "redirect:/"
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/users/login")
     fun signin(): String {
         return "login"
     }

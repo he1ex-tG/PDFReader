@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.io.IOException
 import java.io.InputStream
+import java.net.Authenticator
 import java.net.MalformedURLException
 
 @Service
@@ -44,7 +45,7 @@ class StorageHandlerServiceH2(
             User(
                 "admin",
                 /*admin*/"\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
-                UserRole.USER,
+                UserRole.ADMIN,
                 UserStatus.ACTIVE
             )
         )
@@ -52,8 +53,8 @@ class StorageHandlerServiceH2(
             User(
                 "anonymousUser",
                 "",
-                null,
-                null
+                UserRole.USER,
+                UserStatus.ACTIVE
             )
         )
     }

@@ -28,8 +28,8 @@ class UserOperations(
 
     }
 
-    @DeleteMapping("/{username}")
-    fun deleteUser(@PathVariable username: String) {
+    @DeleteMapping("")
+    fun deleteUser(@RequestParam("username") username: String) {
 
     }
 

@@ -1,54 +1,67 @@
 package com.he1extg.pdfreader.security
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.core.annotation.Order
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.security.config.web.servlet.invoke
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig : WebSecurityConfigurerAdapter() {
+class SecurityConfig {
 
-    @Autowired
-    lateinit var userDetailsService: UserDetailsService
-
-    override fun configure(http: HttpSecurity) {
-        http
-            .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/css/**", "/images/**", "/js/**", "/**").permitAll()
-                .anyRequest().authenticated()
-            .and()
-                .formLogin()
-                .loginPage("/auth/login").permitAll()
-                .defaultSuccessUrl("/")
-            .and()
-                .logout()
-                .logoutRequestMatcher(AntPathRequestMatcher("/auth/logout", "GET"))
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessUrl("/auth/login?logout")
-    }
-
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(daoAuthenticationProvider())
-    }
-
+    @Order(1)
     @Bean
-    protected fun passwordEncoder() = BCryptPasswordEncoder(12)
-
-    @Bean
-    protected fun daoAuthenticationProvider() = DaoAuthenticationProvider()
-        .apply {
-            setPasswordEncoder(passwordEncoder())
-            setUserDetailsService(userDetailsService)
+    fun adminApiFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http.invoke {
+            securityMatcher("/users")
+            csrf {
+                disable()
+            }
+            /* Anonymous users can add new users */
+            authorizeRequests {
+                authorize(HttpMethod.POST, "/users", permitAll)
+            }
+            /* Any another operation e.g. list or delete - only for admins */
+            authorizeRequests {
+                authorize(anyRequest, hasAuthority(UserPermission.ROLE_ADMIN.permission))
+            }
         }
+        return http.build()
+    }
+
+    @Bean
+    fun httpFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http.invoke {
+            csrf {
+                disable()
+            }
+            /* Default politic is permitAll */
+            authorizeRequests {
+                authorize("/**", permitAll)
+            }
+            formLogin {
+                permitAll()
+                loginPage = "/users/login"
+                defaultSuccessUrl("/", true)
+            }
+            logout {
+                logoutRequestMatcher = AntPathRequestMatcher("/users/logout")
+                logoutSuccessUrl = "/users/login?logout"
+                invalidateHttpSession = true
+                clearAuthentication = true
+                deleteCookies("JSESSIONID")
+            }
+        }
+        return http.build()
+    }
+
+    @Bean
+    fun passwordEncoder() = BCryptPasswordEncoder(12)
+
 }
