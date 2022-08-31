@@ -4,6 +4,8 @@ import com.he1extg.pdfreader.entity.User
 import com.he1extg.pdfreader.repository.UserRepository
 import com.he1extg.pdfreader.security.UserRole
 import com.he1extg.pdfreader.security.UserStatus
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController
 class UserOperations(
     val userRepository: UserRepository
 ) {
+
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
 
     @GetMapping("")
     fun getUsers(): List<String> {
@@ -37,7 +42,7 @@ class UserOperations(
     fun addUser(@RequestParam username: String, @RequestParam password: String) {
         val newUser = User(
             username,
-            password,
+            passwordEncoder.encode(password),
             UserRole.USER,
             UserStatus.ACTIVE
         )

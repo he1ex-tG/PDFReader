@@ -44,7 +44,7 @@ class StorageHandlerServiceH2(
         userRepository.save(
             User(
                 "admin",
-                /*admin*/"\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
+                /*admin*/"{bcrypt}\$2a\$12\$L9iYxslNXJ7/PsVUX3QJ/.BXd8k6FroGd38A4dBY2Oe/bSjvVbF2a",
                 UserRole.ADMIN,
                 UserStatus.ACTIVE
             )

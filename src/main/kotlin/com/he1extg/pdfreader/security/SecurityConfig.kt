@@ -10,6 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.config.web.servlet.invoke
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 @EnableWebSecurity
@@ -62,6 +64,12 @@ class SecurityConfig {
     }
 
     @Bean
-    fun passwordEncoder() = BCryptPasswordEncoder(12)
+    fun passwordEncoder(): PasswordEncoder {
+        val idForEncode = "bcrypt"
+        val encoders: Map<String, PasswordEncoder> = mapOf(
+            idForEncode to BCryptPasswordEncoder(12)
+        )
+        return DelegatingPasswordEncoder(idForEncode, encoders)
+    }
 
 }
