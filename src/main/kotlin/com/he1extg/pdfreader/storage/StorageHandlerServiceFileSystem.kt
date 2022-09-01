@@ -3,8 +3,7 @@ package com.he1extg.pdfreader.storage
 import com.he1extg.pdfreader.controller.rest.FileOperations
 import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
-import com.he1extg.pdfreader.ttsprocessing.PDFReader
-import com.he1extg.pdfreader.ttsprocessing.TTS
+import com.he1extg.pdfreader.ttsprocessing.Converter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.FileSystemUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.MalformedURLException
@@ -31,19 +31,6 @@ class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) 
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
-    @Autowired
-    private lateinit var pdfReader: PDFReader
-    @Autowired
-    private lateinit var tts: TTS
-
-    override fun convertPdfToMP3(filePDF: MultipartFile): InputStream {
-        if (filePDF.isEmpty) {
-            throw StorageException("Failed to store empty file " + filePDF.originalFilename)
-        }
-        val pdfText = pdfReader.extractText(filePDF.inputStream)
-        return tts.stream(pdfText)
-    }
-
     private fun Path.maxFilesControl(amount: Int) {
         val filesInDir = Files.list(this).collect(Collectors.toList())
         if (filesInDir.count() > amount) {
@@ -59,17 +46,16 @@ class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) 
         }
     }
 
-    override fun storePdfAsMP3(filePDF: MultipartFile) {
+    override fun save(fileName: String, inputStream: InputStream) {
         try {
-            if (filePDF.isEmpty) {
-                throw StorageException("Failed to store empty file " + filePDF.originalFilename)
-            }
-            val fileNameToStore = filePDF.originalFilename!!.split(".").first() + ".mp3"
-            val filePath = rootLocation.resolve(fileNameToStore)
-            Files.copy(convertPdfToMP3(filePDF), filePath, StandardCopyOption.REPLACE_EXISTING)
+            /*if (inputStream.isEmpty) {
+                throw StorageException("Failed to store empty file " + inputStream.originalFilename)
+            }*/
+            val filePath = rootLocation.resolve(fileName)
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING)
             rootLocation.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
-            throw StorageException("Failed to store file " + filePDF.originalFilename, e)
+            throw StorageException("Failed to store file $fileName", e)
         }
     }
 
@@ -82,25 +68,18 @@ class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) 
             throw StorageException("Failed to read stored files", e)
         }
 
-    override fun loadAllAsFileInfoStream() = FileInfoList(
-        loadAll().map {
-            FileInfo(
-                it.fileName.toString(),
-                MvcUriComponentsBuilder.fromMethodName(
-                    FileOperations::class.java,
-                    "serveFile",
-                    it.fileName.toString()
-                ).build().toUri().toString(),
-            )
+    override fun list(): List<String> {
+        return loadAll().map {
+            it.fileName.toString()
         }
-    )
+    }
 
-    override fun loadAsResource(fileName: String): Resource =
+    override fun load(fileName: String): InputStream =
         try {
             val file: Path = rootLocation.resolve(fileName)
             val resource: Resource = UrlResource(file.toUri())
             if (resource.exists() || resource.isReadable) {
-                resource
+                ByteArrayInputStream(resource.file.readBytes())
             } else {
                 throw StorageFileNotFoundException("Could not read file: $fileName")
             }

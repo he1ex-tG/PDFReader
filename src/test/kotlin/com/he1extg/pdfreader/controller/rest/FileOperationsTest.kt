@@ -38,7 +38,7 @@ internal class FileOperationsTest(
 
     @Test
     fun serveFile_existFile() {
-        given(storageHandler.loadAsResource(MockitoHelper.anyObject())).willReturn(resourceMP3)
+        given(storageHandler.load(MockitoHelper.anyObject())).willReturn(resourceMP3)
 
         val answer = testRestTemplate.getForEntity("/files/$testFileName.mp3", Resource::class.java)
 
@@ -49,7 +49,7 @@ internal class FileOperationsTest(
 
     @Test
     fun getFilesList_noFiles_emptyList() {
-        given(storageHandler.loadAllAsFileInfoStream()).willReturn(FileInfoList(listOf()))
+        given(storageHandler.list()).willReturn(FileInfoList(listOf()))
 
         val answer = testRestTemplate.getForEntity("/files", FileInfoList::class.java)
 
@@ -69,7 +69,7 @@ internal class FileOperationsTest(
                 )
             }
         )
-        given(storageHandler.loadAllAsFileInfoStream()).willReturn(fileInfoList)
+        given(storageHandler.list()).willReturn(fileInfoList)
 
         val answer = testRestTemplate.getForEntity("/files", FileInfoList::class.java)
 
