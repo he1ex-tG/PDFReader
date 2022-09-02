@@ -1,8 +1,8 @@
 package com.he1extg.pdfreader.controller.rest
 
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
-import com.he1extg.pdfreader.storage.FileInfo
-import com.he1extg.pdfreader.storage.FileInfoList
+import com.he1extg.pdfreader.repositoryhandler.storage.FileInfo
+import com.he1extg.pdfreader.repositoryhandler.storage.FileInfoList
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders

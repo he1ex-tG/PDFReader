@@ -1,8 +1,8 @@
 package com.he1extg.pdfreader.controller.rest
 
-import com.he1extg.pdfreader.storage.FileInfo
-import com.he1extg.pdfreader.storage.FileInfoList
-import com.he1extg.pdfreader.storage.StorageHandler
+import com.he1extg.pdfreader.repositoryhandler.storage.FileInfo
+import com.he1extg.pdfreader.repositoryhandler.storage.FileInfoList
+import com.he1extg.pdfreader.repositoryhandler.storage.StorageHandler
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.*

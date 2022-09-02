@@ -1,6 +1,6 @@
 package com.he1extg.pdfreader.controller.rest
 
-import com.he1extg.pdfreader.storage.StorageHandler
+import com.he1extg.pdfreader.repositoryhandler.storage.StorageHandler
 import com.he1extg.pdfreader.ttsprocessing.Converter
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.InputStream

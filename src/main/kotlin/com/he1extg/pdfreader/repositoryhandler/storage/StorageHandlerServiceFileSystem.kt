@@ -1,18 +1,13 @@
-package com.he1extg.pdfreader.storage
+package com.he1extg.pdfreader.repositoryhandler.storage
 
-import com.he1extg.pdfreader.controller.rest.FileOperations
 import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
-import com.he1extg.pdfreader.ttsprocessing.Converter
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
 import org.springframework.util.FileSystemUtils
-import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
@@ -28,6 +23,7 @@ import kotlin.io.path.getLastModifiedTime
 @EnableConfigurationProperties(StoragePropertiesFileStorage::class)
 @Profile("filestorage")
 class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) : StorageHandler {
+
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 

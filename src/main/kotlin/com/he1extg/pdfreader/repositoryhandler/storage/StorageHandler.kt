@@ -1,4 +1,4 @@
-package com.he1extg.pdfreader.storage
+package com.he1extg.pdfreader.repositoryhandler.storage
 
 import java.io.InputStream
 

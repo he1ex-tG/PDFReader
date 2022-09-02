@@ -1,10 +1,11 @@
-package com.he1extg.pdfreader.storage
+package com.he1extg.pdfreader.repositoryhandler.storage
 
 import com.he1extg.pdfreader.entity.StoredFile
 import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.repository.StoredFileRepository
 import com.he1extg.pdfreader.repository.UserRepository
+import com.he1extg.pdfreader.repositoryhandler.BaseRepositoryHandler
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
 import org.springframework.security.core.context.SecurityContextHolder
@@ -21,14 +22,17 @@ class StorageHandlerServiceH2(
     properties: StoragePropertiesH2Database,
     val userRepository: UserRepository,
     val storedFileRepository: StoredFileRepository,
-) : StorageHandler {
+) : BaseRepositoryHandler(), StorageHandler {
+
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
+    private val userLogin: String
+        get() = SecurityContextHolder.getContext().authentication.name ?: ""
 
     override fun init() {
     }
 
     private fun StoredFileRepository.maxFilesControl(amount: Int) {
-        val storedFiles = this.getStoredFileByOwnerLogin(SecurityContextHolder.getContext().authentication.name)
+        val storedFiles = this.getStoredFileByOwnerLogin(userLogin)
         if (storedFiles.size > amount) {
             val myTimestampComparator = Comparator<StoredFile> { a, b -> a.timestamp.compareTo(b.timestamp) }
             val id = storedFiles.minOfWith(myTimestampComparator) { it }.ID
@@ -43,7 +47,7 @@ class StorageHandlerServiceH2(
             /*if (inputStream.isEmpty) {
                 throw StorageException("Failed to store empty file " + inputStream.originalFilename)
             }*/
-            val fileOwner = userRepository.findByLogin(SecurityContextHolder.getContext().authentication.name)
+            val fileOwner = userRepository.findByLogin(userLogin)
 
             val newFileToStore = StoredFile(fileName, inputStream.readBytes(), owner = fileOwner!!)
             storedFileRepository.save(newFileToStore)
@@ -55,7 +59,7 @@ class StorageHandlerServiceH2(
     }
 
     override fun list(): List<String> {
-        return storedFileRepository.getStoredFileByOwnerLogin(SecurityContextHolder.getContext().authentication.name)
+        return storedFileRepository.getStoredFileByOwnerLogin(userLogin)
             .map { it.fileName }
     }
 

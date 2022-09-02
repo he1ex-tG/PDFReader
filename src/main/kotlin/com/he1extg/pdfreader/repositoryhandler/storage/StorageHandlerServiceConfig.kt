@@ -1,4 +1,4 @@
-package com.he1extg.pdfreader.storage
+package com.he1extg.pdfreader.repositoryhandler.storage
 
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
