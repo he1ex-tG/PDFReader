@@ -10,7 +10,7 @@ class UserDetailsImpl(
 
     private val username = user.login
     private val password = user.password
-    private val authorities = user.role?.authorities ?: UserRole.USER.authorities
+    private val authorities = user.role.authorities
     private val isActive = user.status == UserStatus.ACTIVE
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = authorities.toMutableList()

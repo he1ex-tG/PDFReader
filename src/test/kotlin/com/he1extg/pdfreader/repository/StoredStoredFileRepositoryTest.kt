@@ -37,7 +37,6 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
         val answerNull = storedFileRepository.getStoredFileByID(10L)
         assertThat(answerNull).isNull()
 
-
         val answerNotNull = storedFileRepository.getStoredFileByID(fileList[0].ID!!)
         assertThat(answerNotNull).isNotNull
         assertThat(answerNotNull?.fileName).isEqualTo(newStoredFile.fileName)

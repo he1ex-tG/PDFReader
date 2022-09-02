@@ -9,7 +9,7 @@ import javax.persistence.*
 class User(
     var login: String,
     var password: String,
-    @Enumerated(value = EnumType.STRING) var role: UserRole? = null,
-    @Enumerated(value = EnumType.STRING) var status: UserStatus? = null,
+    @Enumerated(value = EnumType.STRING) var role: UserRole,
+    @Enumerated(value = EnumType.STRING) var status: UserStatus,
     @Id @GeneratedValue var ID: Long? = null,
 )

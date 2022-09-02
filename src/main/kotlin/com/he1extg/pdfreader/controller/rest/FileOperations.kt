@@ -37,8 +37,8 @@ class FileOperations : FileOperationsBase() {
                 FileInfo(
                     it,
                     MvcUriComponentsBuilder.fromMethodName(
-                        FileOperations::class.java,
-                        FileOperations::getFile.name,
+                        this::class.java,
+                        this::getFile.name,
                         it
                     ).build().toUri().toString(),
                 )

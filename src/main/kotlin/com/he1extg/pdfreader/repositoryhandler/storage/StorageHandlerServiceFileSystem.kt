@@ -22,7 +22,9 @@ import kotlin.io.path.getLastModifiedTime
 @Service
 @EnableConfigurationProperties(StoragePropertiesFileStorage::class)
 @Profile("filestorage")
-class StorageHandlerServiceFileSystem(properties: StoragePropertiesFileStorage) : StorageHandler {
+class StorageHandlerServiceFileSystem(
+    properties: StoragePropertiesFileStorage,
+) : StorageHandler {
 
     private val rootLocation: Path = Paths.get(properties.uploadDir)
     private val maxFilesToStore = properties.maxFilesToStore.toInt()

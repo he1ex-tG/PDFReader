@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 @Profile("h2database")
-class H2RepositoriesInit(
+class RepositoryInitializationH2(
     val userRepository: UserRepository
 ) {
 

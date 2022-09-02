@@ -11,9 +11,6 @@ class ConverterService(
 ) : Converter {
 
     override fun convert(inputStream: InputStream): InputStream {
-        /*if (inputStream.isEmpty) {
-            throw StorageException("Failed to store empty file " + inputStream.originalFilename)
-        }*/
         val pdfText = pdfReader.extractText(inputStream)
         return tts.stream(pdfText)
     }

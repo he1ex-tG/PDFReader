@@ -18,7 +18,7 @@ open class FileOperationsBase {
 
     fun save(fileName: String, inputStream: InputStream) {
         val converted = convert(inputStream)
-        val fileNameToStore =  fileName!!.split(".").first() + ".mp3"
+        val fileNameToStore =  fileName.split(".").first() + ".mp3"
         storageHandler.save(fileNameToStore, converted)
     }
 
