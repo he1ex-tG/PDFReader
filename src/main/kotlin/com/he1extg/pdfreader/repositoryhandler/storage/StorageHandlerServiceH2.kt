@@ -20,7 +20,10 @@ import java.net.MalformedURLException
 @Profile("h2database")
 class StorageHandlerServiceH2(
     properties: StoragePropertiesH2Database,
-) : RepositoryHandlerBase(), StorageHandler {
+) : StorageHandler {
+
+    @Autowired
+    lateinit var handlerBase: RepositoryHandlerBase
 
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
@@ -28,7 +31,7 @@ class StorageHandlerServiceH2(
     }
 
     private fun StoredFileRepository.maxFilesControl(amount: Int) {
-        val storedFiles = this.getStoredFileByOwner(currentUser)
+        val storedFiles = this.getStoredFileByOwner(handlerBase.currentUser)
         if (storedFiles.size > amount) {
             val myTimestampComparator = Comparator<StoredFile> { a, b -> a.timestamp.compareTo(b.timestamp) }
             val id = storedFiles.minOfWith(myTimestampComparator) { it }.ID
@@ -40,23 +43,23 @@ class StorageHandlerServiceH2(
 
     override fun save(fileName: String, inputStream: InputStream) {
         try {
-            val newFileToStore = StoredFile(fileName, inputStream.readBytes(), owner = currentUser)
-            storedFileRepository.save(newFileToStore)
+            val newFileToStore = StoredFile(fileName, inputStream.readBytes(), owner = handlerBase.currentUser)
+            handlerBase.storedFileRepository.save(newFileToStore)
 
-            storedFileRepository.maxFilesControl(maxFilesToStore)
+            handlerBase.storedFileRepository.maxFilesControl(maxFilesToStore)
         } catch (e: IOException) {
             throw StorageException("Failed to store file $fileName", e)
         }
     }
 
     override fun list(): List<String> {
-        return storedFileRepository.getStoredFileByOwner(currentUser)
+        return handlerBase.storedFileRepository.getStoredFileByOwner(handlerBase.currentUser)
             .map { it.fileName }
     }
 
     override fun load(fileName: String): InputStream =
         try {
-            val storedFile = storedFileRepository.getStoredFileByFileNameAndOwner(fileName, currentUser)
+            val storedFile = handlerBase.storedFileRepository.getStoredFileByFileNameAndOwner(fileName, handlerBase.currentUser)
             if (storedFile != null) {
                 ByteArrayInputStream(storedFile.file)
             } else {

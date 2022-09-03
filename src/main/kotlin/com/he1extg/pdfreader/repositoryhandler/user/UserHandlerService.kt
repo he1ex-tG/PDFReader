@@ -9,19 +9,21 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserHandlerService : RepositoryHandlerBase(), UserHandler {
+class UserHandlerService : UserHandler {
 
+    @Autowired
+    lateinit var handlerBase: RepositoryHandlerBase
     @Autowired
     lateinit var passwordEncoder: PasswordEncoder
 
     override fun save(username: String, password: String) {
-        println(currentUser)
+        println(handlerBase.currentUser)
         val newUser = User(
             username,
             passwordEncoder.encode(password),
             UserRole.USER,
             UserStatus.ACTIVE
         )
-        userRepository.save(newUser)
+        handlerBase.userRepository.save(newUser)
     }
 }
