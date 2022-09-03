@@ -1,14 +1,11 @@
 package com.he1extg.pdfreader.repositoryhandler.storage
 
 import com.he1extg.pdfreader.entity.StoredFile
-import com.he1extg.pdfreader.entity.User
 import com.he1extg.pdfreader.exception.StorageException
 import com.he1extg.pdfreader.exception.StorageFileNotFoundException
 import com.he1extg.pdfreader.repository.StoredFileRepository
-import com.he1extg.pdfreader.repository.UserRepository
+import com.he1extg.pdfreader.repositoryhandler.RepositoryHandlerBase
 import com.he1extg.pdfreader.repositoryhandler.user.UserHandler
-import com.he1extg.pdfreader.security.UserRole
-import com.he1extg.pdfreader.security.UserStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile
@@ -23,12 +20,7 @@ import java.net.MalformedURLException
 @Profile("h2database")
 class StorageHandlerServiceH2(
     properties: StoragePropertiesH2Database,
-) : StorageHandler {
-
-    @Autowired
-    lateinit var userHandler: UserHandler
-    @Autowired
-    lateinit var storedFileRepository: StoredFileRepository
+) : RepositoryHandlerBase(), StorageHandler {
 
     private val maxFilesToStore = properties.maxFilesToStore.toInt()
 
@@ -36,7 +28,7 @@ class StorageHandlerServiceH2(
     }
 
     private fun StoredFileRepository.maxFilesControl(amount: Int) {
-        val storedFiles = this.getStoredFileByOwner(userHandler.currentUser)
+        val storedFiles = this.getStoredFileByOwner(currentUser)
         if (storedFiles.size > amount) {
             val myTimestampComparator = Comparator<StoredFile> { a, b -> a.timestamp.compareTo(b.timestamp) }
             val id = storedFiles.minOfWith(myTimestampComparator) { it }.ID
@@ -48,7 +40,7 @@ class StorageHandlerServiceH2(
 
     override fun save(fileName: String, inputStream: InputStream) {
         try {
-            val newFileToStore = StoredFile(fileName, inputStream.readBytes(), owner = userHandler.currentUser)
+            val newFileToStore = StoredFile(fileName, inputStream.readBytes(), owner = currentUser)
             storedFileRepository.save(newFileToStore)
 
             storedFileRepository.maxFilesControl(maxFilesToStore)
@@ -58,13 +50,13 @@ class StorageHandlerServiceH2(
     }
 
     override fun list(): List<String> {
-        return storedFileRepository.getStoredFileByOwner(userHandler.currentUser)
+        return storedFileRepository.getStoredFileByOwner(currentUser)
             .map { it.fileName }
     }
 
     override fun load(fileName: String): InputStream =
         try {
-            val storedFile = storedFileRepository.getStoredFileByFileNameAndOwner(fileName, userHandler.currentUser)
+            val storedFile = storedFileRepository.getStoredFileByFileNameAndOwner(fileName, currentUser)
             if (storedFile != null) {
                 ByteArrayInputStream(storedFile.file)
             } else {
