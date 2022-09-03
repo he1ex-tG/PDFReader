@@ -99,17 +99,19 @@ Here is a small note: by default, FreeTTS does not provide the ability
 output the audio stream as a ByteArrayInputStream or ByteArray, for example. 
 Therefore, I made my own implementation of the AudioPlayer interface. 
 This approach made it possible to abandon the use of intermediate saving of 
-audio data to a file, as well as to hot convert from WAV to MP3 on the fly using 
+audio data to a file, as well as to hot convert from WAV to MP3 using 
 [Lame](https://lame.sourceforge.io/). Finally, the MP3 audio stream is used to 
 save or give to the user without saving.
 
 ## TODO
 
-- [x] Add WAV to MP3 conversion
-- [x] Add using database instead of storing MP3 in files
-- [ ] Add authorization and authentication (Spring Security)
+- [x] WAV to MP3 conversion
+- [x] Using database instead of storing MP3 in files
+- [x] Authorization and authentication (Spring Security)
+  - [x] Users authorization via form login
+  - [ ] Access to admin API via JWT 
   - [ ] Add the corresponding REST API
-  - [ ] Rework database structure
+  - [x] Rework database structure
 - [ ] Move the user web interface to a separate project
 
 
