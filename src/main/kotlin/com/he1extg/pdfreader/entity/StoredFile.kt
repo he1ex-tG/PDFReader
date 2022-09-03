@@ -7,8 +7,10 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.Lob
 import javax.persistence.ManyToOne
+import javax.persistence.Table
 
 @Entity
+@Table(name = "StoredFiles")
 class StoredFile(
     var fileName: String,
     @Lob var file: ByteArray,

@@ -15,7 +15,7 @@ class MainPageHandling(
     fun listUploadedFiles(model: Model): String {
         model.addAttribute(
             "files",
-            fileOperations.getFilesList().filesInfo
+            fileOperations.getFileList().filesInfo
         )
         return "index"
     }
@@ -23,8 +23,13 @@ class MainPageHandling(
     @PostMapping("/")
     fun handleFileUpload(@RequestParam("file") file: MultipartFile, redirectAttributes: RedirectAttributes): String {
         if (!file.isEmpty) {
-            fileOperations.uploadPdfAndConvertToMP3(file)
+            fileOperations.saveFile(file)
         }
         return "redirect:/"
+    }
+
+    @GetMapping("/users/login")
+    fun signin(): String {
+        return "login"
     }
 }

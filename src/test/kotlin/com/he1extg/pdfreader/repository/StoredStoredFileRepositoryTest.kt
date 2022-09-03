@@ -2,6 +2,8 @@ package com.he1extg.pdfreader.repository
 
 import com.he1extg.pdfreader.entity.StoredFile
 import com.he1extg.pdfreader.entity.User
+import com.he1extg.pdfreader.security.UserRole
+import com.he1extg.pdfreader.security.UserStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +17,7 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
     val storedFileRepository: StoredFileRepository,
     val userRepository: UserRepository,
 ) {
-    private val newUser = User("he1ex", "123")
+    private val newUser = User("he1ex", "123", UserRole.USER, UserStatus.ACTIVE)
     private val newStoredFile = StoredFile(
         ClassPathResource("test/test.mp3").file.name,
         ClassPathResource("test/test.mp3").file.readBytes(),
@@ -34,7 +36,6 @@ class StoredStoredFileRepositoryTest @Autowired constructor(
 
         val answerNull = storedFileRepository.getStoredFileByID(10L)
         assertThat(answerNull).isNull()
-
 
         val answerNotNull = storedFileRepository.getStoredFileByID(fileList[0].ID!!)
         assertThat(answerNotNull).isNotNull
